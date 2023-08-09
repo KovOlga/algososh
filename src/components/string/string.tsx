@@ -7,6 +7,7 @@ import { useState } from "react";
 import { ChangeEvent } from "react";
 import { Circle } from "../ui/circle/circle";
 import { ElementStates } from "../../types/element-states";
+import { InputWithButton } from "../input-with-button/input-with-button";
 
 export const StringComponent: React.FC = () => {
   const [input, setInput] = useState<string[]>([]);
@@ -116,18 +117,12 @@ export const StringComponent: React.FC = () => {
   return (
     <SolutionLayout title="Строка">
       <div className={styles.container}>
-        <div className={styles.data}>
-          <div className={styles.data__input}>
-            <Input
-              extraClass={styles.input_jhb}
-              maxLength={11}
-              value={input.join("")}
-              onChange={onInputChange}
-            ></Input>
-            <p className={styles.info}>Максимум — 11 символов</p>
-          </div>
-          <Button text="Развернуть" onClick={onDisplayClick}></Button>
-        </div>
+        <InputWithButton
+          input={input}
+          modifyedLetters={modifyedLetters}
+          onInputChange={onInputChange}
+          onDisplayClick={onDisplayClick}
+        />
         <div className={styles.display}>
           <ul className={styles.list}>
             {modifyedLetters.map((letter, i) => {
