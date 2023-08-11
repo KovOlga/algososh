@@ -1,7 +1,5 @@
 import React from "react";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
-import { Input } from "../ui/input/input";
-import { Button } from "../ui/button/button";
 import styles from "./string.module.css";
 import { useState } from "react";
 import { ChangeEvent } from "react";
@@ -10,7 +8,7 @@ import { ElementStates } from "../../types/element-states";
 import { InputWithButton } from "../input-with-button/input-with-button";
 
 export const StringComponent: React.FC = () => {
-  const [input, setInput] = useState<string[]>([]);
+  const [input, setInput] = useState<string>("");
   const [modifyedLetters, setModifyedLetters] = useState<
     { status: ElementStates; value: string }[]
   >([]);
@@ -103,7 +101,7 @@ export const StringComponent: React.FC = () => {
   };
 
   const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setInput(event.target.value.split(""));
+    setInput(event.target.value);
     const hh = event.target.value.split("").map((letter) => {
       return { value: letter, status: ElementStates.Default };
     });
@@ -119,7 +117,6 @@ export const StringComponent: React.FC = () => {
       <div className={styles.container}>
         <InputWithButton
           input={input}
-          modifyedLetters={modifyedLetters}
           onInputChange={onInputChange}
           onDisplayClick={onDisplayClick}
         />
