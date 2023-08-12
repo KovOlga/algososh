@@ -17,27 +17,27 @@ export const FibonacciPage: React.FC = () => {
   }, []);
 
   const getFibSequence = (num: number) => {
-    const fibArr = [0, 1];
-    const fibMatrix = [[0], [0, 1]];
+    const fibSequence = [0, 1];
+    const fibSequenceMatrixed = [[0], [0, 1]];
 
     for (let i = 2; i <= num; i++) {
-      fibArr.push(fibArr[i - 2] + fibArr[i - 1]);
-      fibMatrix.push([...fibArr]);
+      fibSequence.push(fibSequence[i - 2] + fibSequence[i - 1]);
+      fibSequenceMatrixed.push([...fibSequence]);
     }
 
-    return fibMatrix;
+    return fibSequenceMatrixed;
   };
 
   const onDisplayClick = useCallback(() => {
-    const matrix = getFibSequence(+input);
+    const fibSequenceMatrixed = getFibSequence(+input);
 
     setIsLoading(true);
 
     let step = 0;
 
     const timerId = setInterval(() => {
-      if (step < matrix.length) {
-        setFibSequence(matrix[step]);
+      if (step < fibSequenceMatrixed.length) {
+        setFibSequence(fibSequenceMatrixed[step]);
         step++;
       } else {
         clearInterval(timerId);
