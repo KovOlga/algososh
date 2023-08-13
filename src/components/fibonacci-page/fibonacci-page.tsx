@@ -47,14 +47,17 @@ export const FibonacciPage: React.FC = () => {
     }, 500);
   }, [input]);
 
+  const btnsArr = [{ text: "Рассчитать", onClick: onDisplayClick }];
+
   return (
     <SolutionLayout title="Последовательность Фибоначчи">
       <div className={styles.container}>
         <InputWithButton
-          btnText="Рассчитать"
           input={input}
           onInputChange={onInputChange}
-          onDisplayClick={onDisplayClick}
+          btnsArr={btnsArr}
+          isLimitText={true}
+          max={19}
         />
         <div className={styles.display}>
           <ul className={styles.list}>

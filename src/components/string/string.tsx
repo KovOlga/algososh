@@ -112,14 +112,17 @@ export const StringComponent: React.FC = () => {
     sort();
   };
 
+  const btnsArr = [{ text: "Развернуть", onClick: onDisplayClick }];
+
   return (
     <SolutionLayout title="Строка">
       <div className={styles.container}>
         <InputWithButton
-          btnText="Развернуть"
           input={input}
           onInputChange={onInputChange}
-          onDisplayClick={onDisplayClick}
+          btnsArr={btnsArr}
+          isLimitText={true}
+          maxLength={11}
         />
         <div className={styles.display}>
           <ul className={styles.list}>

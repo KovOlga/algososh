@@ -26,17 +26,21 @@ export const StackPage: React.FC = () => {
   const onResetBtnClick = () => {
     console.log("reset");
   };
+
+  const btnsArr = [
+    { text: "Добавить", onClick: onAddClick },
+    { text: "Удалить", onClick: onDeleteBtnClick },
+  ];
+
   return (
     <SolutionLayout title="Стек">
       <div className={styles.menu}>
         <InputWithButton
-          btnText="Добавить"
           input={input}
           onInputChange={onInputChange}
-          onDisplayClick={onAddClick}
-          additionalBtn={true}
-          additionalBtnText="Удалить"
-          onAdditionalBtnClick={onDeleteBtnClick}
+          btnsArr={btnsArr}
+          isLimitText={true}
+          maxLength={4}
         />
         <Button text="Очистить" onClick={onResetBtnClick} />
       </div>

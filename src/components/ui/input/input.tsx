@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./input.module.css";
 
-interface InputProps extends React.HTMLProps<HTMLInputElement> {
+export interface InputProps extends React.HTMLProps<HTMLInputElement> {
   placeholder?: string;
   extraClass?: string;
   isLimitText?: boolean;
