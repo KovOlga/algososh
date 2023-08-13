@@ -32,9 +32,13 @@ export const QueuePage: React.FC = () => {
   const onAddClick = () => {
     setLoading(true);
     let step = 0;
-    let currentInd = 0;
     let head = queue.findIndex((item) => item.head);
     let tail = queue.findIndex((item) => item.tail);
+
+    if (tail === queue.length - 1) {
+      setLoading(false);
+      return;
+    }
 
     setTimeout(function run() {
       if (step === 0) {
@@ -78,6 +82,12 @@ export const QueuePage: React.FC = () => {
     setLoading(true);
     let step = 0;
     let head = queue.findIndex((item) => item.head);
+    let tail = queue.findIndex((item) => item.tail);
+
+    if (head === tail) {
+      setLoading(false);
+      return;
+    }
 
     setTimeout(function run() {
       if (step === 0) {
@@ -101,7 +111,8 @@ export const QueuePage: React.FC = () => {
                 ...item,
                 value: "",
                 status: ElementStates.Default,
-                head: false,
+                head: head === queue.length ? true : false,
+                tail: false,
               };
             } else if (i === head) {
               return { ...item, head: true };
