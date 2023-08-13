@@ -7,7 +7,12 @@ import { ChangeEvent } from "react";
 interface IinputWithButtonProps extends InputProps {
   input: string;
   onInputChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  btnsArr: { text: string; onClick: () => void }[];
+  btnsArr: {
+    text: string;
+    onClick: () => void;
+    loader?: boolean | undefined;
+    disabled?: boolean | undefined;
+  }[];
 }
 
 export const InputWithButton: React.FC<IinputWithButtonProps> = ({
@@ -26,7 +31,15 @@ export const InputWithButton: React.FC<IinputWithButtonProps> = ({
       />
       {btnsArr &&
         btnsArr.map((btn, i) => {
-          return <Button key={i} text={btn.text} onClick={btn.onClick} />;
+          return (
+            <Button
+              isLoader={btn.loader}
+              disabled={btn.disabled}
+              key={i}
+              text={btn.text}
+              onClick={btn.onClick}
+            />
+          );
         })}
     </div>
   );
