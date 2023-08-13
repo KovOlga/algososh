@@ -5,12 +5,20 @@ import styles from "./input-with-button.module.css";
 import { ChangeEvent } from "react";
 
 interface IinputWithButtonProps {
+  additionalBtn?: boolean;
+  additionalBtnText?: string;
+  onAdditionalBtnClick?: () => void;
+  btnText: string;
   input: string;
   onInputChange: (event: ChangeEvent<HTMLInputElement>) => void;
   onDisplayClick: () => void;
 }
 
 export const InputWithButton: React.FC<IinputWithButtonProps> = ({
+  additionalBtn = false,
+  additionalBtnText,
+  onAdditionalBtnClick,
+  btnText,
   input,
   onInputChange,
   onDisplayClick,
@@ -26,7 +34,10 @@ export const InputWithButton: React.FC<IinputWithButtonProps> = ({
         ></Input>
         <p className={styles.info}>Максимум — 11 символов</p>
       </div>
-      <Button text="Развернуть" onClick={onDisplayClick}></Button>
+      <Button text={btnText} onClick={onDisplayClick}></Button>
+      {additionalBtn && (
+        <Button text={additionalBtnText} onClick={onAdditionalBtnClick} />
+      )}
     </div>
   );
 };

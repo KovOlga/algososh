@@ -116,6 +116,7 @@ export const StringComponent: React.FC = () => {
     <SolutionLayout title="Строка">
       <div className={styles.container}>
         <InputWithButton
+          btnText="Развернуть"
           input={input}
           onInputChange={onInputChange}
           onDisplayClick={onDisplayClick}

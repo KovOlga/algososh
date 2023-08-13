@@ -51,6 +51,7 @@ export const FibonacciPage: React.FC = () => {
     <SolutionLayout title="Последовательность Фибоначчи">
       <div className={styles.container}>
         <InputWithButton
+          btnText="Рассчитать"
           input={input}
           onInputChange={onInputChange}
           onDisplayClick={onDisplayClick}
@@ -61,8 +62,7 @@ export const FibonacciPage: React.FC = () => {
               fibSequence.map((number, i) => {
                 return (
                   <li key={i} className={styles.list__item}>
-                    <Circle letter={number.toString()} />
-                    <p className={styles.index}>{i}</p>
+                    <Circle letter={number.toString()} tail={`${i}`} />
                   </li>
                 );
               })}

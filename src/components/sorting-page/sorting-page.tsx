@@ -5,13 +5,17 @@ import { Button } from "../ui/button/button";
 import styles from "./sorting-page.module.css";
 import { useState, useEffect } from "react";
 import { Column } from "../ui/column/column";
+import { swap, getSortedArr, getBubbleSortedArr } from "./alg-utils";
+import { ElementStates } from "../../types/element-states";
 
 export const SortingPage: React.FC = () => {
   const [ascDescType, setAscDescType] = useState<string>("increasing");
   const [selectedRadioBtn, setSelectedRadioBtn] =
     useState<string>("selectionSort");
   const [newRamdomArray, setNewRamdomArray] = useState<number[]>([]);
-  const [sortedArray, setSortedArray] = useState<number[]>([]);
+  const [sortedArray, setSortedArray] = useState<
+    { value: number; status: ElementStates }[]
+  >([]);
 
   function getRandomArbitrary(min: number, max: number) {
     min = Math.ceil(min);
@@ -52,54 +56,30 @@ export const SortingPage: React.FC = () => {
     }
   }, [ascDescType, selectedRadioBtn, newRamdomArray]);
 
-  const swap = (
-    arr: number[],
-    firstIndex: number,
-    secondIndex: number
-  ): void => {
-    const temp = arr[firstIndex];
-    arr[firstIndex] = arr[secondIndex];
-    arr[secondIndex] = temp;
-  };
-
   const onSelectionSortBtnClick = () => {
-    console.log("sort", newRamdomArray);
-    const hhb = [...newRamdomArray];
-    // console.log("copied newRamdomArray", hhb);
-    const { length } = hhb;
-    for (let i = 0; i < length - 1; i++) {
-      let maxInd = i;
-      // console.log("maxInd", maxInd);
-      for (let j = maxInd; j < length; j++) {
-        // console.log("j", j);
-        if (ascDescType === "increasing" && hhb[j] < hhb[maxInd]) {
-          swap(hhb, maxInd, j);
-        } else if (ascDescType === "decreasing" && hhb[j] > hhb[maxInd]) {
-          swap(hhb, maxInd, j);
-        }
+    const sortedArrayMatrixed = getSortedArr(
+      [...newRamdomArray].map((item) => {
+        return { value: item, status: ElementStates.Default };
+      }),
+      ascDescType
+    );
+    console.log("result sort", sortedArrayMatrixed);
+
+    let step = 0;
+    const timerId = setInterval(() => {
+      if (step < sortedArrayMatrixed.length) {
+        setSortedArray(sortedArrayMatrixed[step]);
+        step++;
+      } else {
+        clearInterval(timerId);
       }
-    }
-    // console.log("newRamdomArray", newRamdomArray);
-    console.log("result sort", hhb);
-    setSortedArray(hhb);
+    }, 1000);
   };
 
   const onBubbleSortBtnClick = () => {
     console.log("bubble sort", newRamdomArray);
-    const hhb = [...newRamdomArray];
-    // console.log("initial newRamdomArray", newRamdomArray);
-    // console.log("copied newRamdomArray", hhb);
-    for (let i = 0; i < hhb.length; i++) {
-      for (let j = 0; j < hhb.length; j++) {
-        if (ascDescType === "increasing" && hhb[j] > hhb[j + 1]) {
-          swap(hhb, j, j + 1);
-        } else if (ascDescType === "decreasing" && hhb[j] < hhb[j + 1]) {
-          swap(hhb, j, j + 1);
-        }
-      }
-    }
+    const hhb = getBubbleSortedArr([...newRamdomArray], ascDescType);
     console.log("result bubble sort", hhb);
-    setSortedArray(hhb);
   };
 
   return (
@@ -139,10 +119,10 @@ export const SortingPage: React.FC = () => {
       <div className={styles.display}>
         <ul className={styles.list}>
           {sortedArray &&
-            sortedArray.map((number, i) => {
+            sortedArray.map((elem, i) => {
               return (
                 <li key={i}>
-                  <Column index={number} />
+                  <Column index={elem.value} state={elem.status} />
                 </li>
               );
             })}
