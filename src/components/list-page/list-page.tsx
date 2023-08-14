@@ -177,7 +177,32 @@ export const ListPage: React.FC = () => {
       }
     }, 500);
   };
-  const onDeleteEndClick = () => {};
+  const onDeleteEndClick = () => {
+    // setLoading(true);
+    let step = 0;
+
+    setTimeout(function run() {
+      if (step === 0) {
+        setList((prevState) => {
+          return prevState.map((item, i) => {
+            if (i === list.length - 1) {
+              return { ...item, deletingHomEnd: true };
+            } else {
+              return item;
+            }
+          });
+        });
+        step++;
+        setTimeout(run, 500);
+      } else if (step === 1) {
+        setList((prevState) => {
+          return prevState.filter((item, i) => i !== list.length - 1);
+        });
+        // setLoading(false);
+        setInputValue("");
+      }
+    }, 500);
+  };
 
   const onDeleteIndexClick = () => {};
   const onAddIndexClick = () => {};
@@ -245,7 +270,8 @@ export const ListPage: React.FC = () => {
                       ) : null
                     }
                     tail={
-                      i === 0 && item.deletingHomEnd ? (
+                      (i === 0 || i === list.length - 1) &&
+                      item.deletingHomEnd ? (
                         <Circle
                           state={ElementStates.Changing}
                           letter={item.value}
