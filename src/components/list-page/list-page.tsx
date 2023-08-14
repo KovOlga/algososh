@@ -89,11 +89,63 @@ export const ListPage: React.FC = () => {
           });
         });
         setLoading(false);
+        setInputValue("");
       }
     }, 500);
-    setInputValue("");
   };
-  const onAddEndClick = () => {};
+  const onAddEndClick = () => {
+    setLoading(true);
+    let step = 0;
+
+    setTimeout(function run() {
+      if (step === 0) {
+        setList((prevState) => {
+          return prevState.map((item, i) => {
+            if (i === prevState.length - 1) {
+              return { ...item, indexChanging: true };
+            } else {
+              return item;
+            }
+          });
+        });
+        step++;
+        setTimeout(run, 500);
+      } else if (step === 1) {
+        setList((prevState) => {
+          return [
+            ...prevState,
+            {
+              value: +inputValue,
+              status: ElementStates.Modified,
+              head: false,
+              tail: false,
+              indexChanging: false,
+            },
+          ].map((item, i) => {
+            if (item.indexChanging) {
+              return { ...item, status: ElementStates.Default };
+            } else {
+              return item;
+            }
+          });
+        });
+        step++;
+        setTimeout(run, 500);
+      } else if (step === 2) {
+        setList((prevState) => {
+          return prevState.map((item, i) => {
+            if (i === prevState.length - 1) {
+              return { ...item, status: ElementStates.Default };
+            } else {
+              return item;
+            }
+          });
+        });
+        setLoading(false);
+        setInputValue("");
+      }
+    }, 500);
+  };
 
   const onDeleteHomeClick = () => {};
   const onDeleteEndClick = () => {};
@@ -152,10 +204,11 @@ export const ListPage: React.FC = () => {
                     letter={`${item.value}`}
                     index={i}
                     head={
-                      i === 0 && item.indexChanging ? (
+                      (i === 0 || i === list.length - 1) &&
+                      item.indexChanging ? (
                         <Circle
                           state={ElementStates.Changing}
-                          letter={`${inputValue}`}
+                          letter={inputValue}
                           isSmall
                         />
                       ) : i === 0 && !item.indexChanging ? (
