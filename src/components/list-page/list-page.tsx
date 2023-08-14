@@ -14,11 +14,12 @@ export const ListPage: React.FC = () => {
   const [inputIndex, setInputIndex] = useState<string>("");
   const [list, setList] = useState<
     {
-      value: number;
+      value: string;
       status: ElementStates;
       head: boolean;
       tail: boolean;
-      indexChanging: boolean;
+      addingHomEnd: boolean;
+      deletingHomEnd: boolean;
     }[]
   >([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -30,11 +31,12 @@ export const ListPage: React.FC = () => {
   useEffect(() => {
     const randomNumsArray = createRandomArr(4, 5, 0, 100).map((item) => {
       return {
-        value: item,
+        value: item.toString(),
         status: ElementStates.Default,
         head: false,
         tail: false,
-        indexChanging: false,
+        addingHomEnd: false,
+        deletingHomEnd: false,
       };
     });
     setList(randomNumsArray);
@@ -49,7 +51,7 @@ export const ListPage: React.FC = () => {
         setList((prevState) => {
           return prevState.map((item, i) => {
             if (i === 0) {
-              return { ...item, indexChanging: true };
+              return { ...item, addingHomEnd: true };
             } else {
               return item;
             }
@@ -61,15 +63,16 @@ export const ListPage: React.FC = () => {
         setList((prevState) => {
           return [
             {
-              value: +inputValue,
+              value: inputValue,
               status: ElementStates.Modified,
               head: false,
               tail: false,
-              indexChanging: false,
+              addingHomEnd: false,
+              deletingHomEnd: false,
             },
             ...prevState,
           ].map((item, i) => {
-            if (item.indexChanging) {
+            if (item.addingHomEnd) {
               return { ...item, status: ElementStates.Default };
             } else {
               return item;
@@ -102,7 +105,7 @@ export const ListPage: React.FC = () => {
         setList((prevState) => {
           return prevState.map((item, i) => {
             if (i === prevState.length - 1) {
-              return { ...item, indexChanging: true };
+              return { ...item, addingHomEnd: true };
             } else {
               return item;
             }
@@ -115,14 +118,15 @@ export const ListPage: React.FC = () => {
           return [
             ...prevState,
             {
-              value: +inputValue,
+              value: inputValue,
               status: ElementStates.Modified,
               head: false,
               tail: false,
-              indexChanging: false,
+              addingHomEnd: false,
+              deletingHomEnd: false,
             },
           ].map((item, i) => {
-            if (item.indexChanging) {
+            if (item.addingHomEnd) {
               return { ...item, status: ElementStates.Default };
             } else {
               return item;
@@ -147,7 +151,32 @@ export const ListPage: React.FC = () => {
     }, 500);
   };
 
-  const onDeleteHomeClick = () => {};
+  const onDeleteHomeClick = () => {
+    // setLoading(true);
+    let step = 0;
+
+    setTimeout(function run() {
+      if (step === 0) {
+        setList((prevState) => {
+          return prevState.map((item, i) => {
+            if (i === 0) {
+              return { ...item, deletingHomEnd: true };
+            } else {
+              return item;
+            }
+          });
+        });
+        step++;
+        setTimeout(run, 500);
+      } else if (step === 1) {
+        setList((prevState) => {
+          return prevState.filter((item, i) => i !== 0);
+        });
+        // setLoading(false);
+        setInputValue("");
+      }
+    }, 500);
+  };
   const onDeleteEndClick = () => {};
 
   const onDeleteIndexClick = () => {};
@@ -201,21 +230,31 @@ export const ListPage: React.FC = () => {
               return (
                 <li className={styles.list__item} key={i}>
                   <Circle
-                    letter={`${item.value}`}
+                    letter={item.deletingHomEnd ? "" : item.value}
                     index={i}
                     head={
                       (i === 0 || i === list.length - 1) &&
-                      item.indexChanging ? (
+                      item.addingHomEnd ? (
                         <Circle
                           state={ElementStates.Changing}
                           letter={inputValue}
                           isSmall
                         />
-                      ) : i === 0 && !item.indexChanging ? (
+                      ) : i === 0 && !item.addingHomEnd ? (
                         "head"
                       ) : null
                     }
-                    tail={i === list.length - 1 ? "tail" : null}
+                    tail={
+                      i === 0 && item.deletingHomEnd ? (
+                        <Circle
+                          state={ElementStates.Changing}
+                          letter={item.value}
+                          isSmall
+                        />
+                      ) : i === list.length - 1 && !item.deletingHomEnd ? (
+                        "tail"
+                      ) : null
+                    }
                     state={item.status}
                   />
                   {i !== list.length - 1 ? <ArrowIcon /> : null}
