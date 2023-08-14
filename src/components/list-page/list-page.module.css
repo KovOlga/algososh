@@ -15,3 +15,10 @@
   gap: 16px;
   margin-top: 48px;
 }
+
+.list__item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}

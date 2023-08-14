@@ -17,11 +17,11 @@ export const FibonacciPage: React.FC = () => {
   }, []);
 
   const getFibSequence = (num: number) => {
-    const fibSequence = [0, 1];
-    const fibSequenceMatrixed = [[0], [0, 1]];
+    const fibSequence = [1, 1];
+    const fibSequenceMatrixed = [[1], [1, 1]];
 
-    for (let i = 2; i <= num; i++) {
-      fibSequence.push(fibSequence[i - 2] + fibSequence[i - 1]);
+    for (let i = 1; i < num; i++) {
+      fibSequence.push(fibSequence[i - 1] + fibSequence[i]);
       fibSequenceMatrixed.push([...fibSequence]);
     }
 
@@ -57,7 +57,7 @@ export const FibonacciPage: React.FC = () => {
           onInputChange={onInputChange}
           btnsArr={btnsArr}
           isLimitText={true}
-          max={19}
+          maxLength={19}
         />
         <div className={styles.display}>
           <ul className={styles.list}>

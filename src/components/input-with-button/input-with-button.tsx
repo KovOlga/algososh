@@ -27,7 +27,7 @@ export const InputWithButton: React.FC<IinputWithButtonProps> = ({
         {...rest}
         extraClass={styles.input_jhb}
         value={input}
-        onChange={onInputChange}
+        onInput={onInputChange}
       />
       {btnsArr &&
         btnsArr.map((btn, i) => {

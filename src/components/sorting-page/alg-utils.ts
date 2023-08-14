@@ -17,17 +17,39 @@ export const getSortedArr = (
   const matrix: { value: number; status: ElementStates }[][] = [];
   matrix.push([...arr]);
 
-  for (let i = 0; i < arr.length - 1; i++) {
-    let maxInd = i;
-    arr[maxInd - 1] = { ...arr[maxInd - 1], status: ElementStates.Modified };
-    for (let j = maxInd; j < arr.length; j++) {
-      if (type === "increasing" && arr[j].value < arr[maxInd].value) {
-        swap(arr, maxInd, j);
-      } else if (type === "decreasing" && arr[j].value > arr[maxInd].value) {
-        swap(arr, maxInd, j);
+  for (let outerIndex = 0; outerIndex < arr.length; outerIndex++) {
+    arr[outerIndex] = {
+      ...arr[outerIndex],
+      status: ElementStates.Changing,
+    };
+    for (
+      let innerIndex = outerIndex + 1;
+      innerIndex < arr.length;
+      innerIndex++
+    ) {
+      const elemToSwap = arr[innerIndex];
+      elemToSwap.status = ElementStates.Changing;
+      matrix.push([...arr]);
+      if (
+        type === "increasing" &&
+        arr[innerIndex].value < arr[outerIndex].value
+      ) {
+        swap(arr, outerIndex, innerIndex);
+        elemToSwap.status = ElementStates.Modified;
+        matrix.push([...arr]);
+      } else if (
+        type === "decreasing" &&
+        arr[innerIndex].value > arr[outerIndex].value
+      ) {
+        swap(arr, outerIndex, innerIndex);
+        elemToSwap.status = ElementStates.Modified;
+        matrix.push([...arr]);
+      } else {
+        elemToSwap.status = ElementStates.Default;
+        matrix.push([...arr]);
       }
     }
-    arr[maxInd] = { ...arr[maxInd], status: ElementStates.Changing };
+    arr[outerIndex] = { ...arr[outerIndex], status: ElementStates.Modified };
     matrix.push([...arr]);
   }
   console.log("matrix", matrix);

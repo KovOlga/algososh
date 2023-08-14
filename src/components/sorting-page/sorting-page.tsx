@@ -5,8 +5,9 @@ import { Button } from "../ui/button/button";
 import styles from "./sorting-page.module.css";
 import { useState, useEffect } from "react";
 import { Column } from "../ui/column/column";
-import { swap, getSortedArr, getBubbleSortedArr } from "./alg-utils";
+import { getSortedArr, getBubbleSortedArr } from "./alg-utils";
 import { ElementStates } from "../../types/element-states";
+import { createRandomArr } from "../../utils/utils";
 
 export const SortingPage: React.FC = () => {
   const [ascDescType, setAscDescType] = useState<string>("increasing");
@@ -17,36 +18,26 @@ export const SortingPage: React.FC = () => {
     { value: number; status: ElementStates }[]
   >([]);
 
-  function getRandomArbitrary(min: number, max: number) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min) + min);
-  }
-  const onCreateRandomArrBtnClick = () => {
-    let randomNumsArray = Array.from(
-      { length: getRandomArbitrary(3, 18) },
-      () => getRandomArbitrary(0, 101)
-    );
-    console.log("newAarray", randomNumsArray);
-    setNewRamdomArray(randomNumsArray);
-    // setSortedArray(randomNumsArray);
-  };
-
   useEffect(() => {
-    onCreateRandomArrBtnClick();
+    onCreateNewRandomArrBtnClick();
   }, []);
 
+  const onCreateNewRandomArrBtnClick = () => {
+    const randomNumsArray = createRandomArr(3, 18, 0, 101);
+    setNewRamdomArray(randomNumsArray);
+  };
+
   const onAscDescBtnClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    console.log(event.currentTarget.value);
     setAscDescType(event.currentTarget.value);
   };
 
   const onChangeSelectedRadioBtnClick = (
     event: React.MouseEvent<HTMLInputElement>
   ) => {
-    console.log(event.currentTarget.value);
     setSelectedRadioBtn(event.currentTarget.value);
   };
+
+  ////////////////////////////////////
 
   useEffect(() => {
     if (selectedRadioBtn === "selectionSort") {
@@ -113,7 +104,7 @@ export const SortingPage: React.FC = () => {
               text="По убыванию"
             />
           </div>
-          <Button onClick={onCreateRandomArrBtnClick} text="Новый массив" />
+          <Button onClick={onCreateNewRandomArrBtnClick} text="Новый массив" />
         </div>
       </div>
       <div className={styles.display}>
