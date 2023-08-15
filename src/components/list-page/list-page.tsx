@@ -16,16 +16,17 @@ export const ListPage: React.FC = () => {
     {
       value: string;
       status: ElementStates;
-      head: boolean;
-      tail: boolean;
-      addingHomEnd: boolean;
-      deletingHomEnd: boolean;
+      isCircleAbove: boolean;
+      isCircleBelow: boolean;
     }[]
   >([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const onInputValueChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
+  };
+  const onInputIndexChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setInputIndex(event.target.value);
   };
 
   useEffect(() => {
@@ -33,10 +34,8 @@ export const ListPage: React.FC = () => {
       return {
         value: item.toString(),
         status: ElementStates.Default,
-        head: false,
-        tail: false,
-        addingHomEnd: false,
-        deletingHomEnd: false,
+        isCircleAbove: false,
+        isCircleBelow: false,
       };
     });
     setList(randomNumsArray);
@@ -51,7 +50,7 @@ export const ListPage: React.FC = () => {
         setList((prevState) => {
           return prevState.map((item, i) => {
             if (i === 0) {
-              return { ...item, addingHomEnd: true };
+              return { ...item, isCircleAbove: true };
             } else {
               return item;
             }
@@ -65,15 +64,13 @@ export const ListPage: React.FC = () => {
             {
               value: inputValue,
               status: ElementStates.Modified,
-              head: false,
-              tail: false,
-              addingHomEnd: false,
-              deletingHomEnd: false,
+              isCircleAbove: false,
+              isCircleBelow: false,
             },
             ...prevState,
           ].map((item, i) => {
-            if (item.addingHomEnd) {
-              return { ...item, status: ElementStates.Default };
+            if (item.isCircleAbove) {
+              return { ...item, isCircleAbove: false };
             } else {
               return item;
             }
@@ -105,7 +102,7 @@ export const ListPage: React.FC = () => {
         setList((prevState) => {
           return prevState.map((item, i) => {
             if (i === prevState.length - 1) {
-              return { ...item, addingHomEnd: true };
+              return { ...item, isCircleAbove: true };
             } else {
               return item;
             }
@@ -120,14 +117,12 @@ export const ListPage: React.FC = () => {
             {
               value: inputValue,
               status: ElementStates.Modified,
-              head: false,
-              tail: false,
-              addingHomEnd: false,
-              deletingHomEnd: false,
+              isCircleAbove: false,
+              isCircleBelow: false,
             },
           ].map((item, i) => {
-            if (item.addingHomEnd) {
-              return { ...item, status: ElementStates.Default };
+            if (item.isCircleAbove) {
+              return { ...item, isCircleAbove: false };
             } else {
               return item;
             }
@@ -160,7 +155,7 @@ export const ListPage: React.FC = () => {
         setList((prevState) => {
           return prevState.map((item, i) => {
             if (i === 0) {
-              return { ...item, deletingHomEnd: true };
+              return { ...item, isCircleBelow: true };
             } else {
               return item;
             }
@@ -186,7 +181,7 @@ export const ListPage: React.FC = () => {
         setList((prevState) => {
           return prevState.map((item, i) => {
             if (i === list.length - 1) {
-              return { ...item, deletingHomEnd: true };
+              return { ...item, isCircleBelow: true };
             } else {
               return item;
             }
@@ -204,8 +199,143 @@ export const ListPage: React.FC = () => {
     }, 500);
   };
 
-  const onDeleteIndexClick = () => {};
-  const onAddIndexClick = () => {};
+  const onAddIndexClick = () => {
+    // setLoading(true);
+    let step = 0;
+
+    setTimeout(async function run() {
+      if (step === 0) {
+        console.log("if");
+
+        for (let i = 0; i <= Number(inputIndex); i++) {
+          let promise = new Promise((resolve, reject) => {
+            setTimeout(() => resolve(i), 1000);
+          });
+          promise.then((currentInd) => {
+            setList((prevState) => {
+              return prevState.map((item, i) => {
+                if (i === currentInd) {
+                  return {
+                    ...item,
+                    isCircleAbove: true,
+                  };
+                } else if (i < Number(currentInd)) {
+                  return {
+                    ...item,
+                    isCircleAbove: false,
+                    status: ElementStates.Changing,
+                  };
+                } else {
+                  return item;
+                }
+              });
+            });
+          });
+          await promise;
+        }
+        step++;
+        setTimeout(run, 1000);
+      } else if (step === 1) {
+        setList((prevState) => {
+          const hbhb = [...prevState];
+          hbhb.splice(Number(inputIndex), 0, {
+            value: inputValue,
+            status: ElementStates.Modified,
+            isCircleAbove: false,
+            isCircleBelow: false,
+          });
+          return hbhb.map((item, i) => {
+            if (i < Number(inputIndex)) {
+              return { ...item, status: ElementStates.Default };
+            } else if (i === Number(inputIndex) + 1) {
+              return { ...item, isCircleAbove: false };
+            } else {
+              return item;
+            }
+          });
+        });
+        step++;
+        setTimeout(run, 1000);
+      } else if (step === 2) {
+        setList((prevState) => {
+          return prevState.map((item, i) => {
+            if (i === Number(inputIndex)) {
+              return { ...item, status: ElementStates.Default };
+            } else {
+              return item;
+            }
+          });
+        });
+        // setLoading(false);
+        // setInputValue("");
+      }
+    }, 1000);
+  };
+
+  const onDeleteIndexClick = () => {
+    // setLoading(true);
+    let step = 0;
+
+    setTimeout(async function run() {
+      if (step === 0) {
+        console.log("if");
+
+        for (let i = 0; i <= Number(inputIndex); i++) {
+          let promise = new Promise((resolve, reject) => {
+            setTimeout(() => resolve(i), 1000);
+          });
+          promise.then((currentInd) => {
+            console.log("currentInd", currentInd);
+            setList((prevState) => {
+              return prevState.map((item, i) => {
+                if (i < Number(currentInd)) {
+                  return {
+                    ...item,
+                    isCircleBelow: false,
+                    status: ElementStates.Changing,
+                  };
+                } else {
+                  return item;
+                }
+              });
+            });
+          });
+          await promise;
+        }
+        step++;
+        setTimeout(run, 1000);
+      } else if (step === 1) {
+        setList((prevState) => {
+          return prevState.map((item, i) => {
+            if (i === Number(inputIndex)) {
+              return {
+                ...item,
+                isCircleBelow: true,
+              };
+            } else {
+              return item;
+            }
+          });
+        });
+        step++;
+        setTimeout(run, 1000);
+      } else if (step === 2) {
+        setList((prevState) => {
+          const hbhb = [...prevState];
+          hbhb.splice(Number(inputIndex), 1);
+          return hbhb.map((item, i) => {
+            if (i < Number(inputIndex)) {
+              return { ...item, status: ElementStates.Default };
+            } else {
+              return item;
+            }
+          });
+        });
+        // setLoading(false);
+        // setInputValue("");
+      }
+    }, 1000);
+  };
 
   const btnArrUp = [
     {
@@ -237,14 +367,14 @@ export const ListPage: React.FC = () => {
       <div className={styles.menu}>
         <InputWithButton
           input={inputValue}
-          onInputChange={onInputChange}
+          onInputChange={onInputValueChange}
           btnsArr={btnArrUp}
           isLimitText={true}
           maxLength={4}
         />
         <InputWithButton
           input={inputIndex}
-          onInputChange={onInputChange}
+          onInputChange={onInputIndexChange}
           btnsArr={btnArrDown}
         />
       </div>
@@ -255,29 +385,27 @@ export const ListPage: React.FC = () => {
               return (
                 <li className={styles.list__item} key={i}>
                   <Circle
-                    letter={item.deletingHomEnd ? "" : item.value}
+                    letter={item.isCircleBelow ? "" : item.value}
                     index={i}
                     head={
-                      (i === 0 || i === list.length - 1) &&
-                      item.addingHomEnd ? (
+                      item.isCircleAbove ? (
                         <Circle
                           state={ElementStates.Changing}
                           letter={inputValue}
                           isSmall
                         />
-                      ) : i === 0 && !item.addingHomEnd ? (
+                      ) : i === 0 && !item.isCircleAbove ? (
                         "head"
                       ) : null
                     }
                     tail={
-                      (i === 0 || i === list.length - 1) &&
-                      item.deletingHomEnd ? (
+                      item.isCircleBelow ? (
                         <Circle
                           state={ElementStates.Changing}
                           letter={item.value}
                           isSmall
                         />
-                      ) : i === list.length - 1 && !item.deletingHomEnd ? (
+                      ) : i === list.length - 1 && !item.isCircleBelow ? (
                         "tail"
                       ) : null
                     }
