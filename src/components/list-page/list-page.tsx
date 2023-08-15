@@ -8,6 +8,7 @@ import { Circle } from "../ui/circle/circle";
 import { createRandomArr } from "../../utils/utils";
 import { ArrowIcon } from "../ui/icons/arrow-icon";
 import { ElementStates } from "../../types/element-states";
+import { MouseEvent } from "react";
 
 export const ListPage: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>("");
@@ -20,13 +21,16 @@ export const ListPage: React.FC = () => {
       isCircleBelow: boolean;
     }[]
   >([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<string>("");
 
   const onInputValueChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
   const onInputIndexChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInputIndex(event.target.value);
+  };
+  const onLoadingChange = (e: MouseEvent<HTMLButtonElement>) => {
+    setLoading(e.currentTarget.innerText);
   };
 
   useEffect(() => {
@@ -41,8 +45,8 @@ export const ListPage: React.FC = () => {
     setList(randomNumsArray);
   }, []);
 
-  const onAddHomeClick = () => {
-    setLoading(true);
+  const onAddHomeClick = (e: MouseEvent<HTMLButtonElement>) => {
+    onLoadingChange(e);
     let step = 0;
 
     setTimeout(function run() {
@@ -88,13 +92,14 @@ export const ListPage: React.FC = () => {
             }
           });
         });
-        setLoading(false);
+        setLoading("");
         setInputValue("");
       }
     }, 500);
   };
-  const onAddEndClick = () => {
-    setLoading(true);
+
+  const onAddEndClick = (e: MouseEvent<HTMLButtonElement>) => {
+    onLoadingChange(e);
     let step = 0;
 
     setTimeout(function run() {
@@ -140,14 +145,14 @@ export const ListPage: React.FC = () => {
             }
           });
         });
-        setLoading(false);
+        setLoading("");
         setInputValue("");
       }
     }, 500);
   };
 
-  const onDeleteHomeClick = () => {
-    // setLoading(true);
+  const onDeleteHomeClick = (e: MouseEvent<HTMLButtonElement>) => {
+    onLoadingChange(e);
     let step = 0;
 
     setTimeout(function run() {
@@ -167,13 +172,14 @@ export const ListPage: React.FC = () => {
         setList((prevState) => {
           return prevState.filter((item, i) => i !== 0);
         });
-        // setLoading(false);
+        setLoading("");
         setInputValue("");
       }
     }, 500);
   };
-  const onDeleteEndClick = () => {
-    // setLoading(true);
+
+  const onDeleteEndClick = (e: MouseEvent<HTMLButtonElement>) => {
+    onLoadingChange(e);
     let step = 0;
 
     setTimeout(function run() {
@@ -193,14 +199,14 @@ export const ListPage: React.FC = () => {
         setList((prevState) => {
           return prevState.filter((item, i) => i !== list.length - 1);
         });
-        // setLoading(false);
+        setLoading("");
         setInputValue("");
       }
     }, 500);
   };
 
-  const onAddIndexClick = () => {
-    // setLoading(true);
+  const onAddIndexClick = (e: MouseEvent<HTMLButtonElement>) => {
+    onLoadingChange(e);
     let step = 0;
 
     setTimeout(async function run() {
@@ -266,14 +272,14 @@ export const ListPage: React.FC = () => {
             }
           });
         });
-        // setLoading(false);
+        setLoading("");
         // setInputValue("");
       }
     }, 1000);
   };
 
-  const onDeleteIndexClick = () => {
-    // setLoading(true);
+  const onDeleteIndexClick = (e: MouseEvent<HTMLButtonElement>) => {
+    onLoadingChange(e);
     let step = 0;
 
     setTimeout(async function run() {
@@ -331,7 +337,7 @@ export const ListPage: React.FC = () => {
             }
           });
         });
-        // setLoading(false);
+        setLoading("");
         // setInputValue("");
       }
     }, 1000);
@@ -341,25 +347,42 @@ export const ListPage: React.FC = () => {
     {
       text: "Добавить в head",
       onClick: onAddHomeClick,
-      loader: loading,
-      disabled: inputValue === "",
+      loader: loading === "Добавить в head",
+      disabled: inputValue === "" || loading !== "",
     },
     {
       text: "Добавить в tail",
       onClick: onAddEndClick,
-      loader: loading,
-      disabled: inputValue === "",
+      loader: loading === "Добавить в tail",
+      disabled: inputValue === "" || loading !== "",
     },
-    { text: "Удалить из head", onClick: onDeleteHomeClick },
-    { text: "Удалить из tail", onClick: onDeleteEndClick },
+    {
+      text: "Удалить из head",
+      onClick: onDeleteHomeClick,
+      loader: loading === "Удалить из head",
+      disabled: loading !== "" || loading !== "",
+    },
+    {
+      text: "Удалить из tail",
+      onClick: onDeleteEndClick,
+      loader: loading === "Удалить из tail",
+      disabled: loading !== "" || loading !== "",
+    },
   ];
 
   const btnArrDown = [
     {
       text: "Добавить по индексу",
       onClick: onAddIndexClick,
+      loader: loading === "Добавить по индексу",
+      disabled: inputIndex === "" || inputValue === "" || loading !== "",
     },
-    { text: "Удалить по индексу", onClick: onDeleteIndexClick },
+    {
+      text: "Удалить по индексу",
+      onClick: onDeleteIndexClick,
+      loader: loading === "Удалить по индексу",
+      disabled: inputIndex === "" || loading !== "",
+    },
   ];
 
   return (
