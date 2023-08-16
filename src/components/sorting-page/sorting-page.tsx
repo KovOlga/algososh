@@ -123,15 +123,6 @@ export const SortingPage: React.FC = () => {
 
   const sortBubble = async (ascDescType: string) => {
     for (let i = 0; i < arr.length; i++) {
-      let promise1 = new Promise((resolve, reject) => {
-        setTimeout(() => resolve(i), 1000);
-      });
-      promise1.then((outerInd) => {
-        setArr((prevState) => {
-          return prevState;
-        });
-      });
-      await promise1;
       for (let j = 0; j < arr.length - i - 1; j++) {
         let promise2 = new Promise((resolve, reject) => {
           setTimeout(() => resolve(j), 1000);

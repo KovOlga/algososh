@@ -6,6 +6,7 @@ import { ChangeEvent } from "react";
 import { Circle } from "../ui/circle/circle";
 import { ElementStates } from "../../types/element-states";
 import { InputWithButton } from "../input-with-button/input-with-button";
+import { waitToUpdate } from "../../utils/utils";
 
 export const StringComponent: React.FC = () => {
   const [input, setInput] = useState<string>("");
@@ -14,95 +15,61 @@ export const StringComponent: React.FC = () => {
   >([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const sort = () => {
+  const sort = async () => {
     setLoading(true);
-    let start = 0;
-    let end = modifyedLetters.length - 1;
-    let prevData: any;
-    let buffer: any;
-
-    const func = (start: number, end: number) => {
-      setModifyedLetters((prevState) => {
-        prevData = [...prevState];
-
-        buffer = prevData[start];
-        prevData[start] = prevData[end];
-        prevData[end] = buffer;
-
-        prevData[start] = {
-          ...prevData[start],
-          status: ElementStates.Changing,
-        };
-        prevData[end] = { ...prevData[end], status: ElementStates.Changing };
-
-        if (start === end) {
-          prevData[start] = {
-            ...prevData[start],
-            status: ElementStates.Modified,
-          };
-        }
-
-        if (prevData[start - 1]) {
-          prevData[start - 1] = {
-            ...prevData[start - 1],
-            status: ElementStates.Modified,
-          };
-        }
-        if (prevData[end + 1]) {
-          prevData[end + 1] = {
-            ...prevData[end + 1],
-            status: ElementStates.Modified,
-          };
-        }
-
-        return prevData;
-      });
-      start++;
-      end--;
-    };
-
-    setTimeout(function run() {
-      if (start <= end) {
-        func(start++, end--);
-        setTimeout(run, 1000);
-      }
-      if (start - end === 1) {
-        setTimeout(() => {
-          setModifyedLetters((prevState) => {
-            prevData = [...prevState];
-
-            prevData[start] = {
-              ...prevData[start],
-              status: ElementStates.Modified,
-            };
-            prevData[end] = {
-              ...prevData[end],
-              status: ElementStates.Modified,
-            };
-
-            return prevData;
+    for (
+      let start = 0, end = modifyedLetters.length - 1;
+      start <= end;
+      start++, end--
+    ) {
+      let promiseToChange = waitToUpdate(1000);
+      promiseToChange.then(() => {
+        setModifyedLetters((prevState) => {
+          return prevState.map((item, index) => {
+            if (index === start) {
+              return { ...item, status: ElementStates.Changing };
+            } else if (index === end) {
+              return { ...item, status: ElementStates.Changing };
+            } else {
+              return item;
+            }
           });
-          setLoading(false);
-        }, 1000);
-      }
-    }, 1000);
+        });
+      });
+      await promiseToChange;
+      let promiseToSwap = waitToUpdate(1000);
+      promiseToSwap.then(() => {
+        setModifyedLetters((prevState) => {
+          let newState = [...prevState];
+          if (newState[start] && newState[end]) {
+            const temp = newState[start];
+            newState[start] = newState[end];
+            newState[end] = temp;
+          }
+          newState = newState.map((item, index) => {
+            if (item.status === ElementStates.Changing) {
+              return { ...item, status: ElementStates.Modified };
+            } else {
+              return item;
+            }
+          });
+          return newState;
+        });
+      });
+      await promiseToSwap;
+    }
+    setLoading(false);
   };
 
   const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value);
-    const hh = event.target.value.split("").map((letter) => {
+    const modifiedArray = event.target.value.split("").map((letter) => {
       return { value: letter, status: ElementStates.Default };
     });
-    setModifyedLetters(hh);
+    setModifyedLetters(modifiedArray);
   };
 
-  const onDisplayClick = () => {
-    sort();
-  };
-
-  const btnsArr = [
-    { text: "Развернуть", onClick: onDisplayClick, loader: loading },
-  ];
+  const btnsArr = [{ text: "Развернуть", onClick: sort, loader: loading }];
 
   return (
     <SolutionLayout title="Строка">
@@ -116,13 +83,14 @@ export const StringComponent: React.FC = () => {
         />
         <div className={styles.display}>
           <ul className={styles.list}>
-            {modifyedLetters.map((letter, i) => {
-              return (
-                <li key={i} className={styles.list__item}>
-                  <Circle letter={letter.value} state={letter.status} />
-                </li>
-              );
-            })}
+            {modifyedLetters &&
+              modifyedLetters.map((item, i) => {
+                return (
+                  <li key={i} className={styles.list__item}>
+                    <Circle letter={item.value} state={item.status} />
+                  </li>
+                );
+              })}
           </ul>
         </div>
       </div>
