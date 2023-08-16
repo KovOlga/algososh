@@ -6,9 +6,10 @@ import styles from "./sorting-page.module.css";
 import { useState, useEffect } from "react";
 import { Column } from "../ui/column/column";
 import { ElementStates } from "../../types/element-states";
-import { createRandomArr } from "../../utils/utils";
+import { createRandomArr, waitToUpdate } from "../../utils/utils";
 import { MouseEvent } from "react";
 import { Direction } from "../../types/direction";
+import { swap } from "./utils";
 
 export const SortingPage: React.FC = () => {
   const [selectedRadioBtn, setSelectedRadioBtn] =
@@ -46,10 +47,8 @@ export const SortingPage: React.FC = () => {
 
   const sortSelection = async (ascDescType: string) => {
     for (let i = 0; i <= arr.length; i++) {
-      let promise = new Promise((resolve, reject) => {
-        setTimeout(() => resolve(i), 1000);
-      });
-      promise.then((outerInd) => {
+      let promiseToChangeCurrent = waitToUpdate(i);
+      promiseToChangeCurrent.then((outerInd) => {
         setArr((prevState) => {
           return prevState.map((item, index) => {
             if (index < i) {
@@ -62,12 +61,10 @@ export const SortingPage: React.FC = () => {
           });
         });
       });
-      await promise;
+      await promiseToChangeCurrent;
       for (let j = i + 1; j < arr.length; j++) {
-        let promise2 = new Promise((resolve, reject) => {
-          setTimeout(() => resolve("j"), 1000);
-        });
-        promise2.then(() => {
+        let promiseToReturnComparing = waitToUpdate(j);
+        promiseToReturnComparing.then(() => {
           setArr((prevState) => {
             return prevState.map((item, index) => {
               if (index === j) {
@@ -80,11 +77,9 @@ export const SortingPage: React.FC = () => {
             });
           });
         });
-        await promise2;
-        let promise3 = new Promise((resolve, reject) => {
-          setTimeout(() => resolve("j"), 1000);
-        });
-        promise3.then(() => {
+        await promiseToReturnComparing;
+        let promiseToSwap = waitToUpdate(j);
+        promiseToSwap.then(() => {
           setArr((prevstate) => {
             if (
               (ascDescType === "increasing" &&
@@ -92,9 +87,7 @@ export const SortingPage: React.FC = () => {
               (ascDescType === "decreasing" &&
                 prevstate[i].value < prevstate[j].value)
             ) {
-              const temp = prevstate[i];
-              prevstate[i] = prevstate[j];
-              prevstate[j] = temp;
+              swap(prevstate, i, j);
               return prevstate.map((item, index) => {
                 if (index === i) {
                   return { ...item, status: ElementStates.Modified };
@@ -115,7 +108,7 @@ export const SortingPage: React.FC = () => {
             }
           });
         });
-        await promise3;
+        await promiseToSwap;
       }
     }
     setLoading("");
@@ -124,10 +117,8 @@ export const SortingPage: React.FC = () => {
   const sortBubble = async (ascDescType: string) => {
     for (let i = 0; i < arr.length; i++) {
       for (let j = 0; j < arr.length - i - 1; j++) {
-        let promise2 = new Promise((resolve, reject) => {
-          setTimeout(() => resolve(j), 1000);
-        });
-        promise2.then(() => {
+        let promiseToSwapCurrent = waitToUpdate(j);
+        promiseToSwapCurrent.then(() => {
           setArr((prevState) => {
             if (
               (ascDescType === "increasing" &&
@@ -135,9 +126,7 @@ export const SortingPage: React.FC = () => {
               (ascDescType === "decreasing" &&
                 prevState[j].value < prevState[j + 1].value)
             ) {
-              const temp = prevState[j];
-              prevState[j] = prevState[j + 1];
-              prevState[j + 1] = temp;
+              swap(prevState, j, j + 1);
             }
             return prevState.map((item, index) => {
               if (index === j || index === j + 1) {
@@ -150,12 +139,10 @@ export const SortingPage: React.FC = () => {
             });
           });
         });
-        await promise2;
+        await promiseToSwapCurrent;
       }
-      let promise3 = new Promise((resolve, reject) => {
-        setTimeout(() => resolve(i), 1000);
-      });
-      promise3.then((outerInd) => {
+      let promiseToMoveForward = waitToUpdate(i);
+      promiseToMoveForward.then(() => {
         setArr((prevState) => {
           return prevState.map((item, index) => {
             if (index === arr.length - i - 1) {
@@ -168,7 +155,7 @@ export const SortingPage: React.FC = () => {
           });
         });
       });
-      await promise3;
+      await promiseToMoveForward;
     }
     setLoading("");
   };
