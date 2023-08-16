@@ -11,7 +11,7 @@ import { createRandomArr } from "../../utils/utils";
 export const SortingPage: React.FC = () => {
   const [ascDescType, setAscDescType] = useState<string>("increasing");
   const [selectedRadioBtn, setSelectedRadioBtn] =
-    useState<string>("selectionSort");
+    useState<string>("bubbleSort");
   const [ramdomArray, setRamdomArray] = useState<number[]>([]);
   const [sortedArray, setSortedArray] = useState<
     { value: number; status: ElementStates }[]
@@ -49,10 +49,8 @@ export const SortingPage: React.FC = () => {
   }, [ascDescType, selectedRadioBtn, ramdomArray]);
 
   const onSelectionSortBtnClick = async () => {
-    console.log("ramdomArray", ramdomArray);
     // onLoadingChange(e);
     for (let i = 0; i <= sortedArray.length; i++) {
-      console.log("i", sortedArray[i]);
       let promise = new Promise((resolve, reject) => {
         setTimeout(() => resolve(i), 1000);
       });
@@ -71,7 +69,6 @@ export const SortingPage: React.FC = () => {
       });
       await promise;
       for (let j = i + 1; j < sortedArray.length; j++) {
-        console.log("sortedArray[j]", sortedArray[j]);
         let promise2 = new Promise((resolve, reject) => {
           setTimeout(() => resolve("j"), 1000);
         });
@@ -89,14 +86,12 @@ export const SortingPage: React.FC = () => {
           });
         });
         await promise2;
-        console.warn("what is the array?", sortedArray);
         let promise3 = new Promise((resolve, reject) => {
           setTimeout(() => resolve("j"), 1000);
         });
         promise3.then(() => {
           setSortedArray((prevstate) => {
             if (prevstate[i].value > prevstate[j].value) {
-              console.log("SWAPED", prevstate[i].value, prevstate[j].value);
               const temp = prevstate[i];
               prevstate[i] = prevstate[j];
               prevstate[j] = temp;
@@ -127,10 +122,59 @@ export const SortingPage: React.FC = () => {
     // setInputValue("");
   };
 
-  const onBubbleSortBtnClick = () => {
-    console.log("bubble sort");
-    // const hhb = getBubbleSortedArr([...newRamdomArray], ascDescType);
-    // console.log("result bubble sort", hhb);
+  const onBubbleSortBtnClick = async () => {
+    for (let i = 0; i < sortedArray.length; i++) {
+      let promise1 = new Promise((resolve, reject) => {
+        setTimeout(() => resolve(i), 1000);
+      });
+      promise1.then((outerInd) => {
+        setSortedArray((prevState) => {
+          return prevState;
+        });
+      });
+      await promise1;
+      for (let j = 0; j < sortedArray.length - i - 1; j++) {
+        let promise2 = new Promise((resolve, reject) => {
+          setTimeout(() => resolve(j), 1000);
+        });
+        promise2.then((innerInd) => {
+          setSortedArray((prevState) => {
+            if (prevState[j].value > prevState[j + 1].value) {
+              const temp = prevState[j];
+              prevState[j] = prevState[j + 1];
+              prevState[j + 1] = temp;
+            }
+            return prevState.map((item, index) => {
+              if (index === j || index === j + 1) {
+                return { ...item, status: ElementStates.Changing };
+              } else if (index < j) {
+                return { ...item, status: ElementStates.Default };
+              } else {
+                return item;
+              }
+            });
+          });
+        });
+        await promise2;
+      }
+      let promise3 = new Promise((resolve, reject) => {
+        setTimeout(() => resolve(i), 1000);
+      });
+      promise3.then((outerInd) => {
+        setSortedArray((prevState) => {
+          return prevState.map((item, index) => {
+            if (index === sortedArray.length - i - 1) {
+              return { ...item, status: ElementStates.Modified };
+            } else if (index < sortedArray.length - i - 1) {
+              return { ...item, status: ElementStates.Default };
+            } else {
+              return item;
+            }
+          });
+        });
+      });
+      await promise3;
+    }
   };
 
   return (
