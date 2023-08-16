@@ -82,9 +82,9 @@ export const SortingPage: React.FC = () => {
         promiseToSwap.then(() => {
           setArr((prevstate) => {
             if (
-              (ascDescType === "increasing" &&
+              (ascDescType === Direction.Ascending &&
                 prevstate[i].value > prevstate[j].value) ||
-              (ascDescType === "decreasing" &&
+              (ascDescType === Direction.Descending &&
                 prevstate[i].value < prevstate[j].value)
             ) {
               swap(prevstate, i, j);
@@ -121,9 +121,9 @@ export const SortingPage: React.FC = () => {
         promiseToSwapCurrent.then(() => {
           setArr((prevState) => {
             if (
-              (ascDescType === "increasing" &&
+              (ascDescType === Direction.Ascending &&
                 prevState[j].value > prevState[j + 1].value) ||
-              (ascDescType === "decreasing" &&
+              (ascDescType === Direction.Descending &&
                 prevState[j].value < prevState[j + 1].value)
             ) {
               swap(prevState, j, j + 1);
@@ -181,7 +181,7 @@ export const SortingPage: React.FC = () => {
         <div className={styles.handlers}>
           <div className={styles.handlers__type}>
             <Button
-              value="increasing"
+              value={Direction.Ascending}
               onClick={onAscDescTypeBtnClick}
               text="По возрастанию"
               isLoader={loading === "По возрастанию"}
@@ -189,7 +189,7 @@ export const SortingPage: React.FC = () => {
               sorting={Direction.Ascending}
             />
             <Button
-              value="decreasing"
+              value={Direction.Descending}
               onClick={onAscDescTypeBtnClick}
               text="По убыванию"
               isLoader={loading === "По убыванию"}

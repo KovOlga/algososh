@@ -8,6 +8,7 @@ import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
 import { ElementStates } from "../../types/element-states";
 import { MouseEvent } from "react";
+import { Buttons } from "../../types/buttons";
 
 export const QueuePage: React.FC = () => {
   const [input, setInput] = useState("");
@@ -164,15 +165,15 @@ export const QueuePage: React.FC = () => {
 
   const btnsArr = [
     {
-      text: "Добавить",
+      text: Buttons.Add,
       onClick: onAddClick,
-      loader: loading === "Добавить",
+      loader: loading === Buttons.Add,
       disabled: input === "" || queue[queue.length - 1].tail,
     },
     {
-      text: "Удалить",
+      text: Buttons.Delete,
       onClick: onDeleteBtnClick,
-      loader: loading === "Удалить",
+      loader: loading === Buttons.Delete,
       disabled: loading !== "" || disabledOnEmptyQueue,
     },
   ];
@@ -188,7 +189,7 @@ export const QueuePage: React.FC = () => {
           maxLength={4}
         />
         <Button
-          text="Очистить"
+          text={Buttons.Reset}
           disabled={loading !== "" || disabledOnEmptyQueue}
           onClick={onResetBtnClick}
         />

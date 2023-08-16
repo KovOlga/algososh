@@ -6,6 +6,7 @@ import { Circle } from "../ui/circle/circle";
 import { useState, useCallback } from "react";
 import { ChangeEvent } from "react";
 import { getFibSequence } from "./utils";
+import { Buttons } from "../../types/buttons";
 
 export const FibonacciPage: React.FC = () => {
   const [input, setInput] = useState("");
@@ -34,7 +35,7 @@ export const FibonacciPage: React.FC = () => {
 
   const btnsArr = [
     {
-      text: "Рассчитать",
+      text: Buttons.Count,
       onClick: onDisplayClick,
       loader: loading,
       disabled: input === "" || Number(input) >= 20 || Number(input) < 1,

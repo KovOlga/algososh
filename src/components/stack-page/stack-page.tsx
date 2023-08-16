@@ -7,6 +7,7 @@ import { ChangeEvent, MouseEvent } from "react";
 import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
 import { ElementStates } from "../../types/element-states";
+import { Buttons } from "../../types/buttons";
 
 export const StackPage: React.FC = () => {
   const [input, setInput] = useState("");
@@ -83,15 +84,15 @@ export const StackPage: React.FC = () => {
 
   const btnsArr = [
     {
-      text: "Добавить",
+      text: Buttons.Add,
       onClick: onAddClick,
-      loader: loading === "Добавить",
+      loader: loading === Buttons.Add,
       disabled: input === "" || loading !== "",
     },
     {
-      text: "Удалить",
+      text: Buttons.Delete,
       onClick: onDeleteBtnClick,
-      loader: loading === "Удалить",
+      loader: loading === Buttons.Delete,
       disabled: loading !== "" || stack.length === 0,
     },
   ];
@@ -107,7 +108,7 @@ export const StackPage: React.FC = () => {
           maxLength={4}
         />
         <Button
-          text="Очистить"
+          text={Buttons.Reset}
           disabled={loading !== "" || stack.length === 0}
           onClick={onResetBtnClick}
         />

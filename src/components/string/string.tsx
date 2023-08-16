@@ -7,6 +7,7 @@ import { Circle } from "../ui/circle/circle";
 import { ElementStates } from "../../types/element-states";
 import { InputWithButton } from "../input-with-button/input-with-button";
 import { waitToUpdate } from "../../utils/utils";
+import { Buttons } from "../../types/buttons";
 
 export const StringComponent: React.FC = () => {
   const [input, setInput] = useState<string>("");
@@ -69,7 +70,7 @@ export const StringComponent: React.FC = () => {
     setModifyedLetters(modifiedArray);
   };
 
-  const btnsArr = [{ text: "Развернуть", onClick: sort, loader: loading }];
+  const btnsArr = [{ text: Buttons.Reverse, onClick: sort, loader: loading }];
 
   return (
     <SolutionLayout title="Строка">

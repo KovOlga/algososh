@@ -9,6 +9,7 @@ import { createRandomArr, waitToUpdate } from "../../utils/utils";
 import { ArrowIcon } from "../ui/icons/arrow-icon";
 import { ElementStates } from "../../types/element-states";
 import { MouseEvent } from "react";
+import { Buttons } from "../../types/buttons";
 
 export const ListPage: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>("");
@@ -317,9 +318,9 @@ export const ListPage: React.FC = () => {
         setTimeout(run, 500);
       } else if (step === 2) {
         setList((prevState) => {
-          const hbhb = [...prevState];
-          hbhb.splice(Number(inputIndex), 1);
-          return hbhb.map((item, i) => {
+          const copiedArr = [...prevState];
+          copiedArr.splice(Number(inputIndex), 1);
+          return copiedArr.map((item, i) => {
             if (i < Number(inputIndex)) {
               return { ...item, status: ElementStates.Default };
             } else {
@@ -334,42 +335,42 @@ export const ListPage: React.FC = () => {
 
   const btnArrUp = [
     {
-      text: "Добавить в head",
+      text: Buttons.Append,
       onClick: onAddHomeClick,
-      loader: loading === "Добавить в head",
+      loader: loading === Buttons.Append,
       disabled: inputValue === "" || loading !== "",
     },
     {
-      text: "Добавить в tail",
+      text: Buttons.Prepend,
       onClick: onAddEndClick,
-      loader: loading === "Добавить в tail",
+      loader: loading === Buttons.Prepend,
       disabled: inputValue === "" || loading !== "",
     },
     {
-      text: "Удалить из head",
+      text: Buttons.DeleteHead,
       onClick: onDeleteHomeClick,
-      loader: loading === "Удалить из head",
+      loader: loading === Buttons.DeleteHead,
       disabled: loading !== "" || loading !== "",
     },
     {
-      text: "Удалить из tail",
+      text: Buttons.DeleteTail,
       onClick: onDeleteEndClick,
-      loader: loading === "Удалить из tail",
+      loader: loading === Buttons.DeleteTail,
       disabled: loading !== "" || loading !== "",
     },
   ];
 
   const btnArrDown = [
     {
-      text: "Добавить по индексу",
+      text: Buttons.AddByIndex,
       onClick: onAddIndexClick,
-      loader: loading === "Добавить по индексу",
+      loader: loading === Buttons.AddByIndex,
       disabled: inputIndex === "" || inputValue === "" || loading !== "",
     },
     {
-      text: "Удалить по индексу",
+      text: Buttons.DeleteByIndex,
       onClick: onDeleteIndexClick,
-      loader: loading === "Удалить по индексу",
+      loader: loading === Buttons.DeleteByIndex,
       disabled: inputIndex === "" || loading !== "",
     },
   ];
