@@ -8,9 +8,9 @@ import { Column } from "../ui/column/column";
 import { ElementStates } from "../../types/element-states";
 import { createRandomArr } from "../../utils/utils";
 import { MouseEvent } from "react";
+import { Direction } from "../../types/direction";
 
 export const SortingPage: React.FC = () => {
-  const [ascDescType, setAscDescType] = useState<string>("increasing");
   const [selectedRadioBtn, setSelectedRadioBtn] =
     useState<string>("selectionSort");
   const [arr, setArr] = useState<{ value: number; status: ElementStates }[]>(
@@ -37,15 +37,14 @@ export const SortingPage: React.FC = () => {
 
   const onAscDescTypeBtnClick = (event: MouseEvent<HTMLButtonElement>) => {
     setLoading(event.currentTarget.innerText);
-    setAscDescType(event.currentTarget.value);
     if (selectedRadioBtn === "selectionSort") {
-      sortSelection();
+      sortSelection(event.currentTarget.value);
     } else {
-      sortBubble();
+      sortBubble(event.currentTarget.value);
     }
   };
 
-  const sortSelection = async () => {
+  const sortSelection = async (ascDescType: string) => {
     for (let i = 0; i <= arr.length; i++) {
       let promise = new Promise((resolve, reject) => {
         setTimeout(() => resolve(i), 1000);
@@ -87,7 +86,12 @@ export const SortingPage: React.FC = () => {
         });
         promise3.then(() => {
           setArr((prevstate) => {
-            if (prevstate[i].value > prevstate[j].value) {
+            if (
+              (ascDescType === "increasing" &&
+                prevstate[i].value > prevstate[j].value) ||
+              (ascDescType === "decreasing" &&
+                prevstate[i].value < prevstate[j].value)
+            ) {
               const temp = prevstate[i];
               prevstate[i] = prevstate[j];
               prevstate[j] = temp;
@@ -117,7 +121,7 @@ export const SortingPage: React.FC = () => {
     setLoading("");
   };
 
-  const sortBubble = async () => {
+  const sortBubble = async (ascDescType: string) => {
     for (let i = 0; i < arr.length; i++) {
       let promise1 = new Promise((resolve, reject) => {
         setTimeout(() => resolve(i), 1000);
@@ -134,7 +138,12 @@ export const SortingPage: React.FC = () => {
         });
         promise2.then((innerInd) => {
           setArr((prevState) => {
-            if (prevState[j].value > prevState[j + 1].value) {
+            if (
+              (ascDescType === "increasing" &&
+                prevState[j].value > prevState[j + 1].value) ||
+              (ascDescType === "decreasing" &&
+                prevState[j].value < prevState[j + 1].value)
+            ) {
               const temp = prevState[j];
               prevState[j] = prevState[j + 1];
               prevState[j + 1] = temp;
@@ -194,20 +203,20 @@ export const SortingPage: React.FC = () => {
         <div className={styles.handlers}>
           <div className={styles.handlers__type}>
             <Button
-              name="ascDescType"
               value="increasing"
               onClick={onAscDescTypeBtnClick}
               text="По возрастанию"
               isLoader={loading === "По возрастанию"}
               disabled={loading !== ""}
+              sorting={Direction.Ascending}
             />
             <Button
-              name="ascDescType"
               value="decreasing"
               onClick={onAscDescTypeBtnClick}
               text="По убыванию"
               isLoader={loading === "По убыванию"}
               disabled={loading !== ""}
+              sorting={Direction.Descending}
             />
           </div>
           <Button
