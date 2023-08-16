@@ -7,55 +7,51 @@ import { useState, useEffect } from "react";
 import { Column } from "../ui/column/column";
 import { ElementStates } from "../../types/element-states";
 import { createRandomArr } from "../../utils/utils";
+import { MouseEvent } from "react";
 
 export const SortingPage: React.FC = () => {
   const [ascDescType, setAscDescType] = useState<string>("increasing");
   const [selectedRadioBtn, setSelectedRadioBtn] =
-    useState<string>("bubbleSort");
-  const [ramdomArray, setRamdomArray] = useState<number[]>([]);
-  const [sortedArray, setSortedArray] = useState<
-    { value: number; status: ElementStates }[]
-  >([]);
+    useState<string>("selectionSort");
+  const [arr, setArr] = useState<{ value: number; status: ElementStates }[]>(
+    []
+  );
+  const [loading, setLoading] = useState<string>("");
 
   useEffect(() => {
     onCreateNewRandomArrBtnClick();
   }, []);
 
   const onCreateNewRandomArrBtnClick = () => {
-    const randomNumsArray = createRandomArr(3, 18, 0, 101);
-    setRamdomArray(randomNumsArray);
-    const hbh = randomNumsArray.map((item) => {
+    const randomArray = createRandomArr(3, 18, 0, 101).map((item) => {
       return { value: item, status: ElementStates.Default };
     });
-    setSortedArray(hbh);
-  };
-
-  const onAscDescBtnClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAscDescType(event.currentTarget.value);
+    setArr(randomArray);
   };
 
   const onChangeSelectedRadioBtnClick = (
-    event: React.MouseEvent<HTMLInputElement>
+    event: MouseEvent<HTMLInputElement>
   ) => {
     setSelectedRadioBtn(event.currentTarget.value);
   };
 
-  useEffect(() => {
+  const onAscDescTypeBtnClick = (event: MouseEvent<HTMLButtonElement>) => {
+    setLoading(event.currentTarget.innerText);
+    setAscDescType(event.currentTarget.value);
     if (selectedRadioBtn === "selectionSort") {
-      onSelectionSortBtnClick();
+      sortSelection();
     } else {
-      onBubbleSortBtnClick();
+      sortBubble();
     }
-  }, [ascDescType, selectedRadioBtn, ramdomArray]);
+  };
 
-  const onSelectionSortBtnClick = async () => {
-    // onLoadingChange(e);
-    for (let i = 0; i <= sortedArray.length; i++) {
+  const sortSelection = async () => {
+    for (let i = 0; i <= arr.length; i++) {
       let promise = new Promise((resolve, reject) => {
         setTimeout(() => resolve(i), 1000);
       });
       promise.then((outerInd) => {
-        setSortedArray((prevState) => {
+        setArr((prevState) => {
           return prevState.map((item, index) => {
             if (index < i) {
               return { ...item, status: ElementStates.Modified };
@@ -68,12 +64,12 @@ export const SortingPage: React.FC = () => {
         });
       });
       await promise;
-      for (let j = i + 1; j < sortedArray.length; j++) {
+      for (let j = i + 1; j < arr.length; j++) {
         let promise2 = new Promise((resolve, reject) => {
           setTimeout(() => resolve("j"), 1000);
         });
         promise2.then(() => {
-          setSortedArray((prevState) => {
+          setArr((prevState) => {
             return prevState.map((item, index) => {
               if (index === j) {
                 return { ...item, status: ElementStates.Changing };
@@ -90,7 +86,7 @@ export const SortingPage: React.FC = () => {
           setTimeout(() => resolve("j"), 1000);
         });
         promise3.then(() => {
-          setSortedArray((prevstate) => {
+          setArr((prevstate) => {
             if (prevstate[i].value > prevstate[j].value) {
               const temp = prevstate[i];
               prevstate[i] = prevstate[j];
@@ -118,27 +114,26 @@ export const SortingPage: React.FC = () => {
         await promise3;
       }
     }
-    // setLoading("");
-    // setInputValue("");
+    setLoading("");
   };
 
-  const onBubbleSortBtnClick = async () => {
-    for (let i = 0; i < sortedArray.length; i++) {
+  const sortBubble = async () => {
+    for (let i = 0; i < arr.length; i++) {
       let promise1 = new Promise((resolve, reject) => {
         setTimeout(() => resolve(i), 1000);
       });
       promise1.then((outerInd) => {
-        setSortedArray((prevState) => {
+        setArr((prevState) => {
           return prevState;
         });
       });
       await promise1;
-      for (let j = 0; j < sortedArray.length - i - 1; j++) {
+      for (let j = 0; j < arr.length - i - 1; j++) {
         let promise2 = new Promise((resolve, reject) => {
           setTimeout(() => resolve(j), 1000);
         });
         promise2.then((innerInd) => {
-          setSortedArray((prevState) => {
+          setArr((prevState) => {
             if (prevState[j].value > prevState[j + 1].value) {
               const temp = prevState[j];
               prevState[j] = prevState[j + 1];
@@ -161,11 +156,11 @@ export const SortingPage: React.FC = () => {
         setTimeout(() => resolve(i), 1000);
       });
       promise3.then((outerInd) => {
-        setSortedArray((prevState) => {
+        setArr((prevState) => {
           return prevState.map((item, index) => {
-            if (index === sortedArray.length - i - 1) {
+            if (index === arr.length - i - 1) {
               return { ...item, status: ElementStates.Modified };
-            } else if (index < sortedArray.length - i - 1) {
+            } else if (index < arr.length - i - 1) {
               return { ...item, status: ElementStates.Default };
             } else {
               return item;
@@ -175,6 +170,7 @@ export const SortingPage: React.FC = () => {
       });
       await promise3;
     }
+    setLoading("");
   };
 
   return (
@@ -198,23 +194,33 @@ export const SortingPage: React.FC = () => {
         <div className={styles.handlers}>
           <div className={styles.handlers__type}>
             <Button
+              name="ascDescType"
               value="increasing"
-              onClick={onAscDescBtnClick}
+              onClick={onAscDescTypeBtnClick}
               text="По возрастанию"
+              isLoader={loading === "По возрастанию"}
+              disabled={loading !== ""}
             />
             <Button
+              name="ascDescType"
               value="decreasing"
-              onClick={onAscDescBtnClick}
+              onClick={onAscDescTypeBtnClick}
               text="По убыванию"
+              isLoader={loading === "По убыванию"}
+              disabled={loading !== ""}
             />
           </div>
-          <Button onClick={onCreateNewRandomArrBtnClick} text="Новый массив" />
+          <Button
+            onClick={onCreateNewRandomArrBtnClick}
+            text="Новый массив"
+            disabled={loading !== ""}
+          />
         </div>
       </div>
       <div className={styles.display}>
         <ul className={styles.list}>
-          {sortedArray &&
-            sortedArray.map((elem, i) => {
+          {arr &&
+            arr.map((elem, i) => {
               return (
                 <li key={i}>
                   <Column index={elem.value} state={elem.status} />
