@@ -127,7 +127,7 @@ export const SortingPage: React.FC = () => {
         let promise2 = new Promise((resolve, reject) => {
           setTimeout(() => resolve(j), 1000);
         });
-        promise2.then((innerInd) => {
+        promise2.then(() => {
           setArr((prevState) => {
             if (
               (ascDescType === "increasing" &&

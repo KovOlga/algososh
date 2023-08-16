@@ -5,6 +5,7 @@ import { InputWithButton } from "../input-with-button/input-with-button";
 import { Circle } from "../ui/circle/circle";
 import { useState, useCallback } from "react";
 import { ChangeEvent } from "react";
+import { getFibSequence } from "./utils";
 
 export const FibonacciPage: React.FC = () => {
   const [input, setInput] = useState("");
@@ -15,25 +16,11 @@ export const FibonacciPage: React.FC = () => {
     setInput(e.target.value);
   }, []);
 
-  const getFibSequence = (num: number) => {
-    const fibSequence = [1, 1];
-    const fibSequenceMatrixed = [[1], [1, 1]];
-
-    for (let i = 1; i < num; i++) {
-      fibSequence.push(fibSequence[i - 1] + fibSequence[i]);
-      fibSequenceMatrixed.push([...fibSequence]);
-    }
-
-    return fibSequenceMatrixed;
-  };
-
   const onDisplayClick = useCallback(() => {
     const fibSequenceMatrixed = getFibSequence(+input);
-
     setLoading(true);
 
     let step = 0;
-
     const timerId = setInterval(() => {
       if (step < fibSequenceMatrixed.length) {
         setFibSequence(fibSequenceMatrixed[step]);

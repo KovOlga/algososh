@@ -16,8 +16,8 @@ export const createRandomArr = (
   return randomNumsArray;
 };
 
-export const waitToUpdate = (time: number): Promise<string> => {
+export const waitToUpdate = (i: number): Promise<number> => {
   return new Promise((resolve, reject) => {
-    setTimeout(() => resolve("resolve"), time);
+    setTimeout(() => resolve(i), 1000);
   });
 };
