@@ -7,15 +7,22 @@ import { ChangeEvent } from "react";
 import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
 import { ElementStates } from "../../types/element-states";
+import { MouseEvent } from "react";
 
 export const QueuePage: React.FC = () => {
   const [input, setInput] = useState("");
   const [queue, setQueue] = useState<
     { value: string; status: ElementStates; head: boolean; tail: boolean }[]
   >([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<string>("");
   const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value);
+  };
+  const [disabledOnEmptyQueue, setDisabledOnEmptyQueue] =
+    useState<boolean>(true);
+
+  const onLoadingChange = (e: MouseEvent<HTMLButtonElement>) => {
+    setLoading(e.currentTarget.innerText);
   };
 
   useEffect(() => {
@@ -29,14 +36,14 @@ export const QueuePage: React.FC = () => {
     );
   }, []);
 
-  const onAddClick = () => {
-    setLoading(true);
+  const onAddClick = (e: MouseEvent<HTMLButtonElement>) => {
+    onLoadingChange(e);
     let step = 0;
     let head = queue.findIndex((item) => item.head);
     let tail = queue.findIndex((item) => item.tail);
 
     if (tail === queue.length - 1) {
-      setLoading(false);
+      setLoading("");
       return;
     }
 
@@ -72,22 +79,18 @@ export const QueuePage: React.FC = () => {
             }
           });
         });
-        setLoading(false);
+        setLoading("");
+        setDisabledOnEmptyQueue(false);
       }
     }, 500);
     setInput("");
   };
 
-  const onDeleteBtnClick = () => {
-    setLoading(true);
+  const onDeleteBtnClick = (e: MouseEvent<HTMLButtonElement>) => {
+    onLoadingChange(e);
     let step = 0;
     let head = queue.findIndex((item) => item.head);
     let tail = queue.findIndex((item) => item.tail);
-
-    if (head === tail) {
-      setLoading(false);
-      return;
-    }
 
     setTimeout(function run() {
       if (step === 0) {
@@ -104,24 +107,43 @@ export const QueuePage: React.FC = () => {
         head++;
         setTimeout(run, 500);
       } else if (step === 1) {
+        if (head - 1 === tail) {
+          setDisabledOnEmptyQueue(true);
+        }
         setQueue((prevState) => {
-          return prevState.map((item, i) => {
-            if (i === head - 1) {
-              return {
-                ...item,
-                value: "",
-                status: ElementStates.Default,
-                head: head === queue.length ? true : false,
-                tail: false,
-              };
-            } else if (i === head) {
-              return { ...item, head: true };
-            } else {
-              return item;
-            }
-          });
+          if (head - 1 === tail) {
+            return prevState.map((item, i) => {
+              if (i === head - 1) {
+                return {
+                  ...item,
+                  value: "",
+                  status: ElementStates.Default,
+                  head: true,
+                  tail: false,
+                };
+              } else {
+                return item;
+              }
+            });
+          } else {
+            return prevState.map((item, i) => {
+              if (i === head - 1) {
+                return {
+                  ...item,
+                  value: "",
+                  status: ElementStates.Default,
+                  head: head === queue.length,
+                  tail: false,
+                };
+              } else if (i === head) {
+                return { ...item, head: true };
+              } else {
+                return item;
+              }
+            });
+          }
         });
-        setLoading(false);
+        setLoading("");
       }
     }, 500);
   };
@@ -144,13 +166,14 @@ export const QueuePage: React.FC = () => {
     {
       text: "Добавить",
       onClick: onAddClick,
-      loader: loading,
-      disabled: input === "",
+      loader: loading === "Добавить",
+      disabled: input === "" || queue[queue.length - 1].tail,
     },
     {
       text: "Удалить",
       onClick: onDeleteBtnClick,
-      disabled: loading || queue.length === 0,
+      loader: loading === "Удалить",
+      disabled: loading !== "" || disabledOnEmptyQueue,
     },
   ];
 
@@ -166,7 +189,7 @@ export const QueuePage: React.FC = () => {
         />
         <Button
           text="Очистить"
-          disabled={loading || queue.length === 0}
+          disabled={loading !== "" || disabledOnEmptyQueue}
           onClick={onResetBtnClick}
         />
       </div>

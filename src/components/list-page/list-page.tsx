@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { InputWithButton } from "../input-with-button/input-with-button";
 import { useState, useEffect } from "react";
 import { ChangeEvent } from "react";
 import styles from "./list-page.module.css";
 import { Circle } from "../ui/circle/circle";
-import { createRandomArr } from "../../utils/utils";
+import { createRandomArr, waitToUpdate } from "../../utils/utils";
 import { ArrowIcon } from "../ui/icons/arrow-icon";
 import { ElementStates } from "../../types/element-states";
 import { MouseEvent } from "react";
@@ -211,13 +211,9 @@ export const ListPage: React.FC = () => {
 
     setTimeout(async function run() {
       if (step === 0) {
-        console.log("if");
-
         for (let i = 0; i <= Number(inputIndex); i++) {
-          let promise = new Promise((resolve, reject) => {
-            setTimeout(() => resolve(i), 1000);
-          });
-          promise.then((currentInd) => {
+          const promiseToMoveCircleAbove = waitToUpdate(i);
+          promiseToMoveCircleAbove.then((currentInd) => {
             setList((prevState) => {
               return prevState.map((item, i) => {
                 if (i === currentInd) {
@@ -237,20 +233,20 @@ export const ListPage: React.FC = () => {
               });
             });
           });
-          await promise;
+          await promiseToMoveCircleAbove;
         }
         step++;
-        setTimeout(run, 1000);
+        setTimeout(run, 500);
       } else if (step === 1) {
         setList((prevState) => {
-          const hbhb = [...prevState];
-          hbhb.splice(Number(inputIndex), 0, {
+          const copiedArr = [...prevState];
+          copiedArr.splice(Number(inputIndex), 0, {
             value: inputValue,
             status: ElementStates.Modified,
             isCircleAbove: false,
             isCircleBelow: false,
           });
-          return hbhb.map((item, i) => {
+          return copiedArr.map((item, i) => {
             if (i < Number(inputIndex)) {
               return { ...item, status: ElementStates.Default };
             } else if (i === Number(inputIndex) + 1) {
@@ -261,7 +257,7 @@ export const ListPage: React.FC = () => {
           });
         });
         step++;
-        setTimeout(run, 1000);
+        setTimeout(run, 500);
       } else if (step === 2) {
         setList((prevState) => {
           return prevState.map((item, i) => {
@@ -273,9 +269,8 @@ export const ListPage: React.FC = () => {
           });
         });
         setLoading("");
-        // setInputValue("");
       }
-    }, 1000);
+    }, 500);
   };
 
   const onDeleteIndexClick = (e: MouseEvent<HTMLButtonElement>) => {
@@ -284,14 +279,9 @@ export const ListPage: React.FC = () => {
 
     setTimeout(async function run() {
       if (step === 0) {
-        console.log("if");
-
         for (let i = 0; i <= Number(inputIndex); i++) {
-          let promise = new Promise((resolve, reject) => {
-            setTimeout(() => resolve(i), 1000);
-          });
-          promise.then((currentInd) => {
-            console.log("currentInd", currentInd);
+          let promiseToMoveCircleBelow = waitToUpdate(i);
+          promiseToMoveCircleBelow.then((currentInd) => {
             setList((prevState) => {
               return prevState.map((item, i) => {
                 if (i < Number(currentInd)) {
@@ -306,10 +296,10 @@ export const ListPage: React.FC = () => {
               });
             });
           });
-          await promise;
+          await promiseToMoveCircleBelow;
         }
         step++;
-        setTimeout(run, 1000);
+        setTimeout(run, 500);
       } else if (step === 1) {
         setList((prevState) => {
           return prevState.map((item, i) => {
@@ -324,7 +314,7 @@ export const ListPage: React.FC = () => {
           });
         });
         step++;
-        setTimeout(run, 1000);
+        setTimeout(run, 500);
       } else if (step === 2) {
         setList((prevState) => {
           const hbhb = [...prevState];
@@ -338,9 +328,8 @@ export const ListPage: React.FC = () => {
           });
         });
         setLoading("");
-        // setInputValue("");
       }
-    }, 1000);
+    }, 500);
   };
 
   const btnArrUp = [

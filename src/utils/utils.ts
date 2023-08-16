@@ -13,6 +13,11 @@ export const createRandomArr = (
     { length: getRandomArbitrary(lenMin, lenMax) },
     () => getRandomArbitrary(ValueMin, valueMax)
   );
-  console.log("newAarray", randomNumsArray);
   return randomNumsArray;
+};
+
+export const waitToUpdate = (i: number): Promise<number> => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => resolve(i), 500);
+  });
 };

@@ -3,7 +3,7 @@ import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { InputWithButton } from "../input-with-button/input-with-button";
 import styles from "./stack-page.module.css";
 import { useState } from "react";
-import { ChangeEvent } from "react";
+import { ChangeEvent, MouseEvent } from "react";
 import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
 import { ElementStates } from "../../types/element-states";
@@ -13,13 +13,16 @@ export const StackPage: React.FC = () => {
   const [stack, setStack] = useState<
     { value: string; status: ElementStates }[]
   >([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<string>("");
   const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value);
   };
+  const onLoadingChange = (e: MouseEvent<HTMLButtonElement>) => {
+    setLoading(e.currentTarget.innerText);
+  };
 
-  const onAddClick = () => {
-    setLoading(true);
+  const onAddClick = (e: MouseEvent<HTMLButtonElement>) => {
+    onLoadingChange(e);
     let step = 0;
 
     setTimeout(function run() {
@@ -42,14 +45,14 @@ export const StackPage: React.FC = () => {
             }
           });
         });
-        setLoading(false);
+        setLoading("");
       }
     }, 500);
     setInput("");
   };
 
-  const onDeleteBtnClick = () => {
-    setLoading(true);
+  const onDeleteBtnClick = (e: MouseEvent<HTMLButtonElement>) => {
+    onLoadingChange(e);
     let step = 0;
 
     setTimeout(function run() {
@@ -57,7 +60,7 @@ export const StackPage: React.FC = () => {
         setStack((prevState) => {
           return prevState.map((item, i) => {
             if (i === prevState.length - 1) {
-              return { value: input, status: ElementStates.Changing };
+              return { ...item, status: ElementStates.Changing };
             } else {
               return item;
             }
@@ -69,7 +72,7 @@ export const StackPage: React.FC = () => {
         setStack((prevState) => {
           return prevState.filter((item, i) => i !== prevState.length - 1);
         });
-        setLoading(false);
+        setLoading("");
       }
     }, 500);
   };
@@ -82,13 +85,14 @@ export const StackPage: React.FC = () => {
     {
       text: "Добавить",
       onClick: onAddClick,
-      loader: loading,
-      disabled: input === "",
+      loader: loading === "Добавить",
+      disabled: input === "" || loading !== "",
     },
     {
       text: "Удалить",
       onClick: onDeleteBtnClick,
-      disabled: loading || stack.length === 0,
+      loader: loading === "Удалить",
+      disabled: loading !== "" || stack.length === 0,
     },
   ];
 
@@ -101,12 +105,10 @@ export const StackPage: React.FC = () => {
           btnsArr={btnsArr}
           isLimitText={true}
           maxLength={4}
-          // loader={loading}
-          // disabled={loading}
         />
         <Button
           text="Очистить"
-          disabled={loading || stack.length === 0}
+          disabled={loading !== "" || stack.length === 0}
           onClick={onResetBtnClick}
         />
       </div>

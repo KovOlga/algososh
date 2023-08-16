@@ -3,13 +3,12 @@ import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import styles from "./fibonacci-page.module.css";
 import { InputWithButton } from "../input-with-button/input-with-button";
 import { Circle } from "../ui/circle/circle";
-import { useState, useEffect, useRef, useCallback } from "react";
-import { ElementStates } from "../../types/element-states";
+import { useState, useCallback } from "react";
 import { ChangeEvent } from "react";
 
 export const FibonacciPage: React.FC = () => {
   const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [fibSequence, setFibSequence] = useState<number[]>([]);
 
   const onInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -31,7 +30,7 @@ export const FibonacciPage: React.FC = () => {
   const onDisplayClick = useCallback(() => {
     const fibSequenceMatrixed = getFibSequence(+input);
 
-    setIsLoading(true);
+    setLoading(true);
 
     let step = 0;
 
@@ -41,13 +40,19 @@ export const FibonacciPage: React.FC = () => {
         step++;
       } else {
         clearInterval(timerId);
-        setIsLoading(false);
-        // setInput("");
+        setLoading(false);
       }
     }, 500);
   }, [input]);
 
-  const btnsArr = [{ text: "Рассчитать", onClick: onDisplayClick }];
+  const btnsArr = [
+    {
+      text: "Рассчитать",
+      onClick: onDisplayClick,
+      loader: loading,
+      disabled: input === "" || Number(input) >= 20 || Number(input) < 1,
+    },
+  ];
 
   return (
     <SolutionLayout title="Последовательность Фибоначчи">
@@ -56,8 +61,9 @@ export const FibonacciPage: React.FC = () => {
           input={input}
           onInputChange={onInputChange}
           btnsArr={btnsArr}
-          isLimitText={true}
-          maxLength={19}
+          isLimitText
+          type="number"
+          max={19}
         />
         <div className={styles.display}>
           <ul className={styles.list}>

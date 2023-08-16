@@ -12,23 +12,16 @@ export const StringComponent: React.FC = () => {
   const [modifyedLetters, setModifyedLetters] = useState<
     { status: ElementStates; value: string }[]
   >([]);
-  const [sortingState, setSortingState] = useState<{
-    disabled: boolean;
-    modifying: boolean;
-  }>({
-    disabled: true,
-    modifying: true,
-  });
+  const [loading, setLoading] = useState<boolean>(false);
 
   const sort = () => {
+    setLoading(true);
     let start = 0;
     let end = modifyedLetters.length - 1;
     let prevData: any;
     let buffer: any;
 
     const func = (start: number, end: number) => {
-      console.log("start", modifyedLetters[start], "start", start);
-      console.log("end", modifyedLetters[end], "end", end);
       setModifyedLetters((prevState) => {
         prevData = [...prevState];
 
@@ -36,7 +29,6 @@ export const StringComponent: React.FC = () => {
         prevData[start] = prevData[end];
         prevData[end] = buffer;
 
-        console.log("prevData", prevData);
         prevData[start] = {
           ...prevData[start],
           status: ElementStates.Changing,
@@ -44,7 +36,6 @@ export const StringComponent: React.FC = () => {
         prevData[end] = { ...prevData[end], status: ElementStates.Changing };
 
         if (start === end) {
-          console.log("hbhb");
           prevData[start] = {
             ...prevData[start],
             status: ElementStates.Modified,
@@ -71,15 +62,11 @@ export const StringComponent: React.FC = () => {
     };
 
     setTimeout(function run() {
-      // console.log("start1", modifyedLetters[start], "start", start);
-      // console.log("end1", modifyedLetters[end], "end", end);
       if (start <= end) {
         func(start++, end--);
-        setTimeout(run, 2000);
+        setTimeout(run, 1000);
       }
       if (start - end === 1) {
-        console.log("start2", modifyedLetters[start], "start", start);
-        console.log("end2", modifyedLetters[end], "end", end);
         setTimeout(() => {
           setModifyedLetters((prevState) => {
             prevData = [...prevState];
@@ -95,9 +82,10 @@ export const StringComponent: React.FC = () => {
 
             return prevData;
           });
-        }, 2000);
+          setLoading(false);
+        }, 1000);
       }
-    }, 2000);
+    }, 1000);
   };
 
   const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -112,7 +100,9 @@ export const StringComponent: React.FC = () => {
     sort();
   };
 
-  const btnsArr = [{ text: "Развернуть", onClick: onDisplayClick }];
+  const btnsArr = [
+    { text: "Развернуть", onClick: onDisplayClick, loader: loading },
+  ];
 
   return (
     <SolutionLayout title="Строка">
