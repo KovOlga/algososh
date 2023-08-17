@@ -9,6 +9,7 @@ import { Circle } from "../ui/circle/circle";
 import { ElementStates } from "../../types/element-states";
 import { Buttons } from "../../types/buttons";
 import { useForm } from "../../hooks/useForm";
+import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 
 export const StackPage: React.FC = () => {
   const [stack, setStack] = useState<
@@ -36,7 +37,7 @@ export const StackPage: React.FC = () => {
           ];
         });
         step++;
-        setTimeout(run, 500);
+        setTimeout(run, SHORT_DELAY_IN_MS);
       } else if (step === 1) {
         setStack((prevState) => {
           return prevState.map((item, i) => {
@@ -49,7 +50,7 @@ export const StackPage: React.FC = () => {
         });
         setLoading("");
       }
-    }, 500);
+    }, SHORT_DELAY_IN_MS);
     setValues({ input: "" });
   };
 
@@ -69,14 +70,14 @@ export const StackPage: React.FC = () => {
           });
         });
         step++;
-        setTimeout(run, 500);
+        setTimeout(run, SHORT_DELAY_IN_MS);
       } else if (step === 1) {
         setStack((prevState) => {
           return prevState.filter((item, i) => i !== prevState.length - 1);
         });
         setLoading("");
       }
-    }, 500);
+    }, SHORT_DELAY_IN_MS);
   };
 
   const onResetBtnClick = () => {

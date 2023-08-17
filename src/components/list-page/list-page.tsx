@@ -10,6 +10,8 @@ import { ElementStates } from "../../types/element-states";
 import { MouseEvent } from "react";
 import { Buttons } from "../../types/buttons";
 import { useForm } from "../../hooks/useForm";
+import { SHORT_DELAY_IN_MS } from "../../constants/delays";
+import { HEAD, TAIL } from "../../constants/element-captions";
 
 export const ListPage: React.FC = () => {
   const [list, setList] = useState<
@@ -61,7 +63,7 @@ export const ListPage: React.FC = () => {
           });
         });
         step++;
-        setTimeout(run, 500);
+        setTimeout(run, SHORT_DELAY_IN_MS);
       } else if (step === 1) {
         setList((prevState) => {
           return [
@@ -81,7 +83,7 @@ export const ListPage: React.FC = () => {
           });
         });
         step++;
-        setTimeout(run, 500);
+        setTimeout(run, SHORT_DELAY_IN_MS);
       } else if (step === 2) {
         setList((prevState) => {
           return prevState.map((item, i) => {
@@ -97,7 +99,7 @@ export const ListPage: React.FC = () => {
           return { ...prevState, inputValue: "" };
         });
       }
-    }, 500);
+    }, SHORT_DELAY_IN_MS);
   };
 
   const onAddEndClick = (e: MouseEvent<HTMLButtonElement>) => {
@@ -116,7 +118,7 @@ export const ListPage: React.FC = () => {
           });
         });
         step++;
-        setTimeout(run, 500);
+        setTimeout(run, SHORT_DELAY_IN_MS);
       } else if (step === 1) {
         setList((prevState) => {
           return [
@@ -136,7 +138,7 @@ export const ListPage: React.FC = () => {
           });
         });
         step++;
-        setTimeout(run, 500);
+        setTimeout(run, SHORT_DELAY_IN_MS);
       } else if (step === 2) {
         setList((prevState) => {
           return prevState.map((item, i) => {
@@ -152,7 +154,7 @@ export const ListPage: React.FC = () => {
           return { ...prevState, inputValue: "" };
         });
       }
-    }, 500);
+    }, SHORT_DELAY_IN_MS);
   };
 
   const onDeleteHomeClick = (e: MouseEvent<HTMLButtonElement>) => {
@@ -171,7 +173,7 @@ export const ListPage: React.FC = () => {
           });
         });
         step++;
-        setTimeout(run, 500);
+        setTimeout(run, SHORT_DELAY_IN_MS);
       } else if (step === 1) {
         setList((prevState) => {
           return prevState.filter((item, i) => i !== 0);
@@ -181,7 +183,7 @@ export const ListPage: React.FC = () => {
           return { ...prevState, inputValue: "" };
         });
       }
-    }, 500);
+    }, SHORT_DELAY_IN_MS);
   };
 
   const onDeleteEndClick = (e: MouseEvent<HTMLButtonElement>) => {
@@ -200,7 +202,7 @@ export const ListPage: React.FC = () => {
           });
         });
         step++;
-        setTimeout(run, 500);
+        setTimeout(run, SHORT_DELAY_IN_MS);
       } else if (step === 1) {
         setList((prevState) => {
           return prevState.filter((item, i) => i !== list.length - 1);
@@ -210,7 +212,7 @@ export const ListPage: React.FC = () => {
           return { ...prevState, inputValue: "" };
         });
       }
-    }, 500);
+    }, SHORT_DELAY_IN_MS);
   };
 
   const onAddIndexClick = (e: MouseEvent<HTMLButtonElement>) => {
@@ -244,7 +246,7 @@ export const ListPage: React.FC = () => {
           await promiseToMoveCircleAbove;
         }
         step++;
-        setTimeout(run, 500);
+        setTimeout(run, SHORT_DELAY_IN_MS);
       } else if (step === 1) {
         setList((prevState) => {
           const copiedArr = [...prevState];
@@ -265,7 +267,7 @@ export const ListPage: React.FC = () => {
           });
         });
         step++;
-        setTimeout(run, 500);
+        setTimeout(run, SHORT_DELAY_IN_MS);
       } else if (step === 2) {
         setList((prevState) => {
           return prevState.map((item, i) => {
@@ -278,7 +280,7 @@ export const ListPage: React.FC = () => {
         });
         setLoading("");
       }
-    }, 500);
+    }, SHORT_DELAY_IN_MS);
   };
 
   const onDeleteIndexClick = (e: MouseEvent<HTMLButtonElement>) => {
@@ -307,7 +309,7 @@ export const ListPage: React.FC = () => {
           await promiseToMoveCircleBelow;
         }
         step++;
-        setTimeout(run, 500);
+        setTimeout(run, SHORT_DELAY_IN_MS);
       } else if (step === 1) {
         setList((prevState) => {
           return prevState.map((item, i) => {
@@ -322,7 +324,7 @@ export const ListPage: React.FC = () => {
           });
         });
         step++;
-        setTimeout(run, 500);
+        setTimeout(run, SHORT_DELAY_IN_MS);
       } else if (step === 2) {
         setList((prevState) => {
           const copiedArr = [...prevState];
@@ -337,7 +339,7 @@ export const ListPage: React.FC = () => {
         });
         setLoading("");
       }
-    }, 500);
+    }, SHORT_DELAY_IN_MS);
   };
 
   const btnArrUp = [
@@ -387,8 +389,6 @@ export const ListPage: React.FC = () => {
     <SolutionLayout title="Связный список">
       <div className={styles.menu}>
         <InputWithButton
-          // input={inputValue}
-          // onInputChange={onInputValueChange}
           btnsArr={btnArrUp}
           isLimitText={true}
           maxLength={4}
@@ -397,8 +397,6 @@ export const ListPage: React.FC = () => {
           name="inputValue"
         />
         <InputWithButton
-          // input={inputIndex}
-          // onInputChange={onInputIndexChange}
           btnsArr={btnArrDown}
           value={values.inputIndex}
           onInput={handleChange}
@@ -422,7 +420,7 @@ export const ListPage: React.FC = () => {
                           isSmall
                         />
                       ) : i === 0 && !item.isCircleAbove ? (
-                        "head"
+                        HEAD
                       ) : null
                     }
                     tail={
@@ -433,7 +431,7 @@ export const ListPage: React.FC = () => {
                           isSmall
                         />
                       ) : i === list.length - 1 && !item.isCircleBelow ? (
-                        "tail"
+                        TAIL
                       ) : null
                     }
                     state={item.status}

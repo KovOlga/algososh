@@ -9,6 +9,8 @@ import { ElementStates } from "../../types/element-states";
 import { MouseEvent } from "react";
 import { Buttons } from "../../types/buttons";
 import { useForm } from "../../hooks/useForm";
+import { SHORT_DELAY_IN_MS } from "../../constants/delays";
+import { HEAD, TAIL } from "../../constants/element-captions";
 
 export const QueuePage: React.FC = () => {
   const [queue, setQueue] = useState<
@@ -61,7 +63,7 @@ export const QueuePage: React.FC = () => {
         });
         step++;
         tail++;
-        setTimeout(run, 500);
+        setTimeout(run, SHORT_DELAY_IN_MS);
       } else if (step === 1) {
         setQueue((prevState) => {
           return prevState.map((item, i) => {
@@ -83,7 +85,7 @@ export const QueuePage: React.FC = () => {
         setLoading("");
         setDisabledOnEmptyQueue(false);
       }
-    }, 500);
+    }, SHORT_DELAY_IN_MS);
     setValues({ input: "" });
   };
 
@@ -106,7 +108,7 @@ export const QueuePage: React.FC = () => {
         });
         step++;
         head++;
-        setTimeout(run, 500);
+        setTimeout(run, SHORT_DELAY_IN_MS);
       } else if (step === 1) {
         if (head - 1 === tail) {
           setDisabledOnEmptyQueue(true);
@@ -146,7 +148,7 @@ export const QueuePage: React.FC = () => {
         });
         setLoading("");
       }
-    }, 500);
+    }, SHORT_DELAY_IN_MS);
   };
 
   const onResetBtnClick = () => {
@@ -202,10 +204,10 @@ export const QueuePage: React.FC = () => {
               return (
                 <li key={i}>
                   <Circle
-                    head={number.head ? "head" : null}
+                    head={number.head ? HEAD : null}
                     letter={`${number.value}`}
                     index={i}
-                    tail={number.tail ? "tail" : null}
+                    tail={number.tail ? TAIL : null}
                     state={number.status}
                   />
                 </li>

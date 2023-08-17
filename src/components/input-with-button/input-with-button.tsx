@@ -2,7 +2,6 @@ import React from "react";
 import { Input, InputProps } from "../ui/input/input";
 import { Button } from "../ui/button/button";
 import styles from "./input-with-button.module.css";
-import { ChangeEvent } from "react";
 import { MouseEvent } from "react";
 
 interface IinputWithButtonProps extends InputProps {

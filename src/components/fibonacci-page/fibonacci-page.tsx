@@ -7,6 +7,7 @@ import { useState, useCallback } from "react";
 import { getFibSequence } from "./utils";
 import { Buttons } from "../../types/buttons";
 import { useForm } from "../../hooks/useForm";
+import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 
 export const FibonacciPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -28,7 +29,7 @@ export const FibonacciPage: React.FC = () => {
         clearInterval(timerId);
         setLoading(false);
       }
-    }, 500);
+    }, SHORT_DELAY_IN_MS);
   }, [values]);
 
   const btnsArr = [

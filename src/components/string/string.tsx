@@ -8,6 +8,7 @@ import { ElementStates } from "../../types/element-states";
 import { InputWithButton } from "../input-with-button/input-with-button";
 import { waitToUpdate } from "../../utils/utils";
 import { Buttons } from "../../types/buttons";
+import { DELAY_IN_MS } from "../../constants/delays";
 
 export const StringComponent: React.FC = () => {
   const [input, setInput] = useState<string>("");
@@ -23,7 +24,7 @@ export const StringComponent: React.FC = () => {
       start <= end;
       start++, end--
     ) {
-      let promiseToChange = waitToUpdate(1000);
+      let promiseToChange = waitToUpdate(DELAY_IN_MS);
       promiseToChange.then(() => {
         setModifyedLetters((prevState) => {
           return prevState.map((item, index) => {
@@ -38,7 +39,7 @@ export const StringComponent: React.FC = () => {
         });
       });
       await promiseToChange;
-      let promiseToSwap = waitToUpdate(1000);
+      let promiseToSwap = waitToUpdate(DELAY_IN_MS);
       promiseToSwap.then(() => {
         setModifyedLetters((prevState) => {
           let newState = [...prevState];

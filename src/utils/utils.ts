@@ -1,3 +1,5 @@
+import { DELAY_IN_MS } from "../constants/delays";
+
 function getRandomArbitrary(min: number, max: number) {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -18,6 +20,6 @@ export const createRandomArr = (
 
 export const waitToUpdate = (i: number): Promise<number> => {
   return new Promise((resolve, reject) => {
-    setTimeout(() => resolve(i), 1000);
+    setTimeout(() => resolve(i), DELAY_IN_MS);
   });
 };
