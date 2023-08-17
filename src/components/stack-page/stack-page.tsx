@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { InputWithButton } from "../input-with-button/input-with-button";
 import styles from "./stack-page.module.css";
@@ -10,15 +10,17 @@ import { ElementStates } from "../../types/element-states";
 import { Buttons } from "../../types/buttons";
 import { useForm } from "../../hooks/useForm";
 import { SHORT_DELAY_IN_MS } from "../../constants/delays";
+import { Stack } from "./Stack";
 
 export const StackPage: React.FC = () => {
-  const [stack, setStack] = useState<
-    { value: string; status: ElementStates }[]
-  >([]);
   const [loading, setLoading] = useState<string>("");
   const { values, handleChange, setValues } = useForm<{ input: string }>({
     input: "",
   });
+  const stackRef = useRef(new Stack<string>());
+  const [stack, setStack] = useState<string[]>([]);
+  const [isLastElementChanging, setIsLastElementChanging] =
+    useState<Boolean>(false);
 
   const onLoadingChange = (e: MouseEvent<HTMLButtonElement>) => {
     setLoading(e.currentTarget.innerText);
@@ -26,57 +28,25 @@ export const StackPage: React.FC = () => {
 
   const onAddClick = (e: MouseEvent<HTMLButtonElement>) => {
     onLoadingChange(e);
-    let step = 0;
-
-    setTimeout(function run() {
-      if (step === 0) {
-        setStack((prevState) => {
-          return [
-            ...prevState,
-            { value: values.input, status: ElementStates.Changing },
-          ];
-        });
-        step++;
-        setTimeout(run, SHORT_DELAY_IN_MS);
-      } else if (step === 1) {
-        setStack((prevState) => {
-          return prevState.map((item, i) => {
-            if (i === prevState.length - 1) {
-              return { value: values.input, status: ElementStates.Default };
-            } else {
-              return item;
-            }
-          });
-        });
-        setLoading("");
-      }
+    stackRef.current.push(values.input);
+    setIsLastElementChanging(true);
+    setStack([...stackRef.current.elements]);
+    setTimeout(() => {
+      setIsLastElementChanging(false);
+      setLoading("");
+      setValues({ input: "" });
     }, SHORT_DELAY_IN_MS);
-    setValues({ input: "" });
   };
 
   const onDeleteBtnClick = (e: MouseEvent<HTMLButtonElement>) => {
     onLoadingChange(e);
-    let step = 0;
-
-    setTimeout(function run() {
-      if (step === 0) {
-        setStack((prevState) => {
-          return prevState.map((item, i) => {
-            if (i === prevState.length - 1) {
-              return { ...item, status: ElementStates.Changing };
-            } else {
-              return item;
-            }
-          });
-        });
-        step++;
-        setTimeout(run, SHORT_DELAY_IN_MS);
-      } else if (step === 1) {
-        setStack((prevState) => {
-          return prevState.filter((item, i) => i !== prevState.length - 1);
-        });
-        setLoading("");
-      }
+    setIsLastElementChanging(true);
+    setTimeout(() => {
+      stackRef.current.pop();
+      setStack([...stackRef.current.elements]);
+      setIsLastElementChanging(false);
+      setLoading("");
+      setValues({ input: "" });
     }, SHORT_DELAY_IN_MS);
   };
 
@@ -123,10 +93,15 @@ export const StackPage: React.FC = () => {
               return (
                 <li key={i}>
                   <Circle
-                    head={i === stack.length - 1 ? "top" : null}
-                    letter={`${number.value}`}
+                    head={i === stackRef.current.lastElement ? "top" : null}
+                    letter={`${number}`}
                     tail={`${i}`}
-                    state={number.status}
+                    state={
+                      isLastElementChanging &&
+                      i === stackRef.current.lastElement
+                        ? ElementStates.Changing
+                        : ElementStates.Default
+                    }
                   />
                 </li>
               );
