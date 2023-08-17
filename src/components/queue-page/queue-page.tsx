@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { InputWithButton } from "../input-with-button/input-with-button";
 import styles from "./queue-page.module.css";
@@ -11,158 +11,54 @@ import { Buttons } from "../../types/buttons";
 import { useForm } from "../../hooks/useForm";
 import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { HEAD, TAIL } from "../../constants/element-captions";
+import { Queue } from "./Queue";
 
 export const QueuePage: React.FC = () => {
-  const [queue, setQueue] = useState<
-    { value: string; status: ElementStates; head: boolean; tail: boolean }[]
-  >([]);
   const [loading, setLoading] = useState<string>("");
   const { values, handleChange, setValues } = useForm<{ input: string }>({
     input: "",
   });
+  const [isHeadChanging, setHeadChanging] = useState<Boolean>(false);
+  const [isTailChanging, setTailChanging] = useState<Boolean>(false);
 
-  const [disabledOnEmptyQueue, setDisabledOnEmptyQueue] =
-    useState<boolean>(true);
-
-  const onLoadingChange = (e: MouseEvent<HTMLButtonElement>) => {
-    setLoading(e.currentTarget.innerText);
-  };
+  const queueRef = useRef(new Queue<string>(3));
+  const [queue, setQueue] = useState<(string | null)[]>([]);
 
   useEffect(() => {
-    setQueue(
-      Array(7).fill({
-        value: "",
-        status: ElementStates.Default,
-        head: false,
-        tail: false,
-      })
-    );
+    setQueue(queueRef.current.elements);
   }, []);
 
   const onAddClick = (e: MouseEvent<HTMLButtonElement>) => {
-    onLoadingChange(e);
-    let step = 0;
-    let head = queue.findIndex((item) => item.head);
-    let tail = queue.findIndex((item) => item.tail);
+    setTailChanging(true);
+    setLoading(e.currentTarget.innerText);
 
-    if (tail === queue.length - 1) {
+    setTimeout(() => {
+      queueRef.current.enqueue(values.input);
+      setQueue(queueRef.current.elements);
+      setTailChanging(false);
       setLoading("");
-      return;
-    }
-
-    setTimeout(function run() {
-      if (step === 0) {
-        setQueue((prevState) => {
-          return prevState.map((item, i) => {
-            if (i === tail + 1) {
-              return { ...item, status: ElementStates.Changing };
-            } else {
-              return item;
-            }
-          });
-        });
-        step++;
-        tail++;
-        setTimeout(run, SHORT_DELAY_IN_MS);
-      } else if (step === 1) {
-        setQueue((prevState) => {
-          return prevState.map((item, i) => {
-            if (i === tail - 1) {
-              return { ...item, tail: false };
-            } else if (i === tail) {
-              return {
-                ...item,
-                tail: true,
-                head: head === -1,
-                value: values.input,
-                status: ElementStates.Default,
-              };
-            } else {
-              return item;
-            }
-          });
-        });
-        setLoading("");
-        setDisabledOnEmptyQueue(false);
-      }
     }, SHORT_DELAY_IN_MS);
     setValues({ input: "" });
   };
 
   const onDeleteBtnClick = (e: MouseEvent<HTMLButtonElement>) => {
-    onLoadingChange(e);
-    let step = 0;
-    let head = queue.findIndex((item) => item.head);
-    let tail = queue.findIndex((item) => item.tail);
+    if (!queueRef.current.isEmpty) {
+      setHeadChanging(true);
+      setLoading(e.currentTarget.innerText);
 
-    setTimeout(function run() {
-      if (step === 0) {
-        setQueue((prevState) => {
-          return prevState.map((item, i) => {
-            if (i === head) {
-              return { ...item, status: ElementStates.Changing };
-            } else {
-              return item;
-            }
-          });
-        });
-        step++;
-        head++;
-        setTimeout(run, SHORT_DELAY_IN_MS);
-      } else if (step === 1) {
-        if (head - 1 === tail) {
-          setDisabledOnEmptyQueue(true);
-        }
-        setQueue((prevState) => {
-          if (head - 1 === tail) {
-            return prevState.map((item, i) => {
-              if (i === head - 1) {
-                return {
-                  ...item,
-                  value: "",
-                  status: ElementStates.Default,
-                  head: true,
-                  tail: false,
-                };
-              } else {
-                return item;
-              }
-            });
-          } else {
-            return prevState.map((item, i) => {
-              if (i === head - 1) {
-                return {
-                  ...item,
-                  value: "",
-                  status: ElementStates.Default,
-                  head: head === queue.length,
-                  tail: false,
-                };
-              } else if (i === head) {
-                return { ...item, head: true };
-              } else {
-                return item;
-              }
-            });
-          }
-        });
+      setTimeout(() => {
+        queueRef.current.dequeue();
+        setQueue(queueRef.current.elements);
+        setHeadChanging(false);
         setLoading("");
-      }
-    }, SHORT_DELAY_IN_MS);
+      }, SHORT_DELAY_IN_MS);
+      setValues({ input: "" });
+    }
   };
 
   const onResetBtnClick = () => {
-    setQueue((prevstate) =>
-      prevstate.map((item) => {
-        return {
-          ...item,
-          value: "",
-          head: false,
-          tail: false,
-          status: ElementStates.Default,
-        };
-      })
-    );
+    queueRef.current.clear();
+    setQueue(queueRef.current.elements);
   };
 
   const btnsArr = [
@@ -170,13 +66,13 @@ export const QueuePage: React.FC = () => {
       text: Buttons.Add,
       onClick: onAddClick,
       loader: loading === Buttons.Add,
-      disabled: values.input === "" || queue[queue.length - 1].tail,
+      disabled: loading !== "" || values.input === "",
     },
     {
       text: Buttons.Delete,
       onClick: onDeleteBtnClick,
       loader: loading === Buttons.Delete,
-      disabled: loading !== "" || disabledOnEmptyQueue,
+      disabled: loading !== "" || queueRef.current.isEmpty,
     },
   ];
 
@@ -193,22 +89,37 @@ export const QueuePage: React.FC = () => {
         />
         <Button
           text={Buttons.Reset}
-          disabled={loading !== "" || disabledOnEmptyQueue}
+          disabled={loading !== "" || queueRef.current.isEmpty}
           onClick={onResetBtnClick}
         />
       </div>
       <div className={styles.display}>
         <ul className={styles.list}>
           {queue &&
-            queue.map((number, i) => {
+            queue.map((letter, i) => {
               return (
                 <li key={i}>
                   <Circle
-                    head={number.head ? HEAD : null}
-                    letter={`${number.value}`}
+                    head={
+                      i === queueRef.current.getHead &&
+                      queue[queueRef.current.getHead] !== undefined
+                        ? HEAD
+                        : null
+                    }
+                    letter={letter ? letter : ""}
                     index={i}
-                    tail={number.tail ? TAIL : null}
-                    state={number.status}
+                    tail={
+                      i === queueRef.current.getTail - 1 &&
+                      queue[queueRef.current.getTail - 1] !== null
+                        ? TAIL
+                        : null
+                    }
+                    state={
+                      (isTailChanging && i === queueRef.current.getTail) ||
+                      (isHeadChanging && i === queueRef.current.getHead)
+                        ? ElementStates.Changing
+                        : ElementStates.Default
+                    }
                   />
                 </li>
               );

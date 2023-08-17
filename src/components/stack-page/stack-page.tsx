@@ -22,12 +22,8 @@ export const StackPage: React.FC = () => {
   const [isLastElementChanging, setIsLastElementChanging] =
     useState<Boolean>(false);
 
-  const onLoadingChange = (e: MouseEvent<HTMLButtonElement>) => {
-    setLoading(e.currentTarget.innerText);
-  };
-
   const onAddClick = (e: MouseEvent<HTMLButtonElement>) => {
-    onLoadingChange(e);
+    setLoading(e.currentTarget.innerText);
     stackRef.current.push(values.input);
     setIsLastElementChanging(true);
     setStack([...stackRef.current.elements]);
@@ -39,7 +35,7 @@ export const StackPage: React.FC = () => {
   };
 
   const onDeleteBtnClick = (e: MouseEvent<HTMLButtonElement>) => {
-    onLoadingChange(e);
+    setLoading(e.currentTarget.innerText);
     setIsLastElementChanging(true);
     setTimeout(() => {
       stackRef.current.pop();
@@ -51,7 +47,8 @@ export const StackPage: React.FC = () => {
   };
 
   const onResetBtnClick = () => {
-    setStack([]);
+    stackRef.current.clear();
+    setStack(stackRef.current.elements);
   };
 
   const btnsArr = [
