@@ -76,8 +76,9 @@ export const StringComponent: React.FC = () => {
     <SolutionLayout title="Строка">
       <div className={styles.container}>
         <InputWithButton
-          input={input}
-          onInputChange={onInputChange}
+          value={input}
+          name="input"
+          onInput={onInputChange}
           btnsArr={btnsArr}
           isLimitText={true}
           maxLength={11}

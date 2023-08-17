@@ -3,21 +3,22 @@ import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { InputWithButton } from "../input-with-button/input-with-button";
 import styles from "./stack-page.module.css";
 import { useState } from "react";
-import { ChangeEvent, MouseEvent } from "react";
+import { MouseEvent } from "react";
 import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
 import { ElementStates } from "../../types/element-states";
 import { Buttons } from "../../types/buttons";
+import { useForm } from "../../hooks/useForm";
 
 export const StackPage: React.FC = () => {
-  const [input, setInput] = useState("");
   const [stack, setStack] = useState<
     { value: string; status: ElementStates }[]
   >([]);
   const [loading, setLoading] = useState<string>("");
-  const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setInput(event.target.value);
-  };
+  const { values, handleChange, setValues } = useForm<{ input: string }>({
+    input: "",
+  });
+
   const onLoadingChange = (e: MouseEvent<HTMLButtonElement>) => {
     setLoading(e.currentTarget.innerText);
   };
@@ -31,7 +32,7 @@ export const StackPage: React.FC = () => {
         setStack((prevState) => {
           return [
             ...prevState,
-            { value: input, status: ElementStates.Changing },
+            { value: values.input, status: ElementStates.Changing },
           ];
         });
         step++;
@@ -40,7 +41,7 @@ export const StackPage: React.FC = () => {
         setStack((prevState) => {
           return prevState.map((item, i) => {
             if (i === prevState.length - 1) {
-              return { value: input, status: ElementStates.Default };
+              return { value: values.input, status: ElementStates.Default };
             } else {
               return item;
             }
@@ -49,7 +50,7 @@ export const StackPage: React.FC = () => {
         setLoading("");
       }
     }, 500);
-    setInput("");
+    setValues({ input: "" });
   };
 
   const onDeleteBtnClick = (e: MouseEvent<HTMLButtonElement>) => {
@@ -87,7 +88,7 @@ export const StackPage: React.FC = () => {
       text: Buttons.Add,
       onClick: onAddClick,
       loader: loading === Buttons.Add,
-      disabled: input === "" || loading !== "",
+      disabled: values.input === "" || loading !== "",
     },
     {
       text: Buttons.Delete,
@@ -101,8 +102,9 @@ export const StackPage: React.FC = () => {
     <SolutionLayout title="Стек">
       <div className={styles.menu}>
         <InputWithButton
-          input={input}
-          onInputChange={onInputChange}
+          value={values.input}
+          onInput={handleChange}
+          name="input"
           btnsArr={btnsArr}
           isLimitText={true}
           maxLength={4}

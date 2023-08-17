@@ -6,8 +6,6 @@ import { ChangeEvent } from "react";
 import { MouseEvent } from "react";
 
 interface IinputWithButtonProps extends InputProps {
-  input: string;
-  onInputChange: (event: ChangeEvent<HTMLInputElement>) => void;
   btnsArr: {
     text: string;
     onClick: (e: MouseEvent<HTMLButtonElement>) => void;
@@ -17,19 +15,12 @@ interface IinputWithButtonProps extends InputProps {
 }
 
 export const InputWithButton: React.FC<IinputWithButtonProps> = ({
-  input,
-  onInputChange,
   btnsArr,
   ...rest
 }) => {
   return (
     <div className={styles.data}>
-      <Input
-        {...rest}
-        extraClass={styles.input_jhb}
-        value={input}
-        onInput={onInputChange}
-      />
+      <Input {...rest} extraClass={styles.input_jhb} />
       {btnsArr &&
         btnsArr.map((btn, i) => {
           return (

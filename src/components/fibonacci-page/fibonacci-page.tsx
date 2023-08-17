@@ -4,21 +4,19 @@ import styles from "./fibonacci-page.module.css";
 import { InputWithButton } from "../input-with-button/input-with-button";
 import { Circle } from "../ui/circle/circle";
 import { useState, useCallback } from "react";
-import { ChangeEvent } from "react";
 import { getFibSequence } from "./utils";
 import { Buttons } from "../../types/buttons";
+import { useForm } from "../../hooks/useForm";
 
 export const FibonacciPage: React.FC = () => {
-  const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [fibSequence, setFibSequence] = useState<number[]>([]);
-
-  const onInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value);
-  }, []);
+  const { values, handleChange } = useForm<{ input: string }>({
+    input: "",
+  });
 
   const onDisplayClick = useCallback(() => {
-    const fibSequenceMatrixed = getFibSequence(+input);
+    const fibSequenceMatrixed = getFibSequence(+values.input);
     setLoading(true);
 
     let step = 0;
@@ -31,14 +29,15 @@ export const FibonacciPage: React.FC = () => {
         setLoading(false);
       }
     }, 500);
-  }, [input]);
+  }, [values]);
 
   const btnsArr = [
     {
       text: Buttons.Count,
       onClick: onDisplayClick,
       loader: loading,
-      disabled: input === "" || Number(input) >= 20 || Number(input) < 1,
+      disabled:
+        values.input === "" || Number(values) >= 20 || Number(values) < 1,
     },
   ];
 
@@ -46,12 +45,13 @@ export const FibonacciPage: React.FC = () => {
     <SolutionLayout title="Последовательность Фибоначчи">
       <div className={styles.container}>
         <InputWithButton
-          input={input}
-          onInputChange={onInputChange}
-          btnsArr={btnsArr}
+          onInput={handleChange}
           isLimitText
           type="number"
           max={19}
+          name="input"
+          value={values.input}
+          btnsArr={btnsArr}
         />
         <div className={styles.display}>
           <ul className={styles.list}>

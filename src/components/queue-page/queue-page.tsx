@@ -3,22 +3,22 @@ import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { InputWithButton } from "../input-with-button/input-with-button";
 import styles from "./queue-page.module.css";
 import { useState, useEffect } from "react";
-import { ChangeEvent } from "react";
 import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
 import { ElementStates } from "../../types/element-states";
 import { MouseEvent } from "react";
 import { Buttons } from "../../types/buttons";
+import { useForm } from "../../hooks/useForm";
 
 export const QueuePage: React.FC = () => {
-  const [input, setInput] = useState("");
   const [queue, setQueue] = useState<
     { value: string; status: ElementStates; head: boolean; tail: boolean }[]
   >([]);
   const [loading, setLoading] = useState<string>("");
-  const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setInput(event.target.value);
-  };
+  const { values, handleChange, setValues } = useForm<{ input: string }>({
+    input: "",
+  });
+
   const [disabledOnEmptyQueue, setDisabledOnEmptyQueue] =
     useState<boolean>(true);
 
@@ -72,7 +72,7 @@ export const QueuePage: React.FC = () => {
                 ...item,
                 tail: true,
                 head: head === -1,
-                value: input,
+                value: values.input,
                 status: ElementStates.Default,
               };
             } else {
@@ -84,7 +84,7 @@ export const QueuePage: React.FC = () => {
         setDisabledOnEmptyQueue(false);
       }
     }, 500);
-    setInput("");
+    setValues({ input: "" });
   };
 
   const onDeleteBtnClick = (e: MouseEvent<HTMLButtonElement>) => {
@@ -168,7 +168,7 @@ export const QueuePage: React.FC = () => {
       text: Buttons.Add,
       onClick: onAddClick,
       loader: loading === Buttons.Add,
-      disabled: input === "" || queue[queue.length - 1].tail,
+      disabled: values.input === "" || queue[queue.length - 1].tail,
     },
     {
       text: Buttons.Delete,
@@ -182,8 +182,9 @@ export const QueuePage: React.FC = () => {
     <SolutionLayout title="Очередь">
       <div className={styles.menu}>
         <InputWithButton
-          input={input}
-          onInputChange={onInputChange}
+          value={values.input}
+          name="input"
+          onInput={handleChange}
           btnsArr={btnsArr}
           isLimitText={true}
           maxLength={4}

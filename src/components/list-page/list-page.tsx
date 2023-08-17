@@ -2,7 +2,6 @@ import React, { useCallback } from "react";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { InputWithButton } from "../input-with-button/input-with-button";
 import { useState, useEffect } from "react";
-import { ChangeEvent } from "react";
 import styles from "./list-page.module.css";
 import { Circle } from "../ui/circle/circle";
 import { createRandomArr, waitToUpdate } from "../../utils/utils";
@@ -10,10 +9,9 @@ import { ArrowIcon } from "../ui/icons/arrow-icon";
 import { ElementStates } from "../../types/element-states";
 import { MouseEvent } from "react";
 import { Buttons } from "../../types/buttons";
+import { useForm } from "../../hooks/useForm";
 
 export const ListPage: React.FC = () => {
-  const [inputValue, setInputValue] = useState<string>("");
-  const [inputIndex, setInputIndex] = useState<string>("");
   const [list, setList] = useState<
     {
       value: string;
@@ -23,13 +21,14 @@ export const ListPage: React.FC = () => {
     }[]
   >([]);
   const [loading, setLoading] = useState<string>("");
+  const { values, handleChange, setValues } = useForm<{
+    inputValue: string;
+    inputIndex: string;
+  }>({
+    inputValue: "",
+    inputIndex: "",
+  });
 
-  const onInputValueChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.target.value);
-  };
-  const onInputIndexChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setInputIndex(event.target.value);
-  };
   const onLoadingChange = (e: MouseEvent<HTMLButtonElement>) => {
     setLoading(e.currentTarget.innerText);
   };
@@ -67,7 +66,7 @@ export const ListPage: React.FC = () => {
         setList((prevState) => {
           return [
             {
-              value: inputValue,
+              value: values.inputValue,
               status: ElementStates.Modified,
               isCircleAbove: false,
               isCircleBelow: false,
@@ -94,7 +93,9 @@ export const ListPage: React.FC = () => {
           });
         });
         setLoading("");
-        setInputValue("");
+        setValues((prevState) => {
+          return { ...prevState, inputValue: "" };
+        });
       }
     }, 500);
   };
@@ -121,7 +122,7 @@ export const ListPage: React.FC = () => {
           return [
             ...prevState,
             {
-              value: inputValue,
+              value: values.inputValue,
               status: ElementStates.Modified,
               isCircleAbove: false,
               isCircleBelow: false,
@@ -147,7 +148,9 @@ export const ListPage: React.FC = () => {
           });
         });
         setLoading("");
-        setInputValue("");
+        setValues((prevState) => {
+          return { ...prevState, inputValue: "" };
+        });
       }
     }, 500);
   };
@@ -174,7 +177,9 @@ export const ListPage: React.FC = () => {
           return prevState.filter((item, i) => i !== 0);
         });
         setLoading("");
-        setInputValue("");
+        setValues((prevState) => {
+          return { ...prevState, inputValue: "" };
+        });
       }
     }, 500);
   };
@@ -201,7 +206,9 @@ export const ListPage: React.FC = () => {
           return prevState.filter((item, i) => i !== list.length - 1);
         });
         setLoading("");
-        setInputValue("");
+        setValues((prevState) => {
+          return { ...prevState, inputValue: "" };
+        });
       }
     }, 500);
   };
@@ -212,7 +219,7 @@ export const ListPage: React.FC = () => {
 
     setTimeout(async function run() {
       if (step === 0) {
-        for (let i = 0; i <= Number(inputIndex); i++) {
+        for (let i = 0; i <= Number(values.inputIndex); i++) {
           const promiseToMoveCircleAbove = waitToUpdate(i);
           promiseToMoveCircleAbove.then((currentInd) => {
             setList((prevState) => {
@@ -241,16 +248,16 @@ export const ListPage: React.FC = () => {
       } else if (step === 1) {
         setList((prevState) => {
           const copiedArr = [...prevState];
-          copiedArr.splice(Number(inputIndex), 0, {
-            value: inputValue,
+          copiedArr.splice(Number(values.inputIndex), 0, {
+            value: values.inputValue,
             status: ElementStates.Modified,
             isCircleAbove: false,
             isCircleBelow: false,
           });
           return copiedArr.map((item, i) => {
-            if (i < Number(inputIndex)) {
+            if (i < Number(values.inputIndex)) {
               return { ...item, status: ElementStates.Default };
-            } else if (i === Number(inputIndex) + 1) {
+            } else if (i === Number(values.inputIndex) + 1) {
               return { ...item, isCircleAbove: false };
             } else {
               return item;
@@ -262,7 +269,7 @@ export const ListPage: React.FC = () => {
       } else if (step === 2) {
         setList((prevState) => {
           return prevState.map((item, i) => {
-            if (i === Number(inputIndex)) {
+            if (i === Number(values.inputIndex)) {
               return { ...item, status: ElementStates.Default };
             } else {
               return item;
@@ -280,7 +287,7 @@ export const ListPage: React.FC = () => {
 
     setTimeout(async function run() {
       if (step === 0) {
-        for (let i = 0; i <= Number(inputIndex); i++) {
+        for (let i = 0; i <= Number(values.inputIndex); i++) {
           let promiseToMoveCircleBelow = waitToUpdate(i);
           promiseToMoveCircleBelow.then((currentInd) => {
             setList((prevState) => {
@@ -304,7 +311,7 @@ export const ListPage: React.FC = () => {
       } else if (step === 1) {
         setList((prevState) => {
           return prevState.map((item, i) => {
-            if (i === Number(inputIndex)) {
+            if (i === Number(values.inputIndex)) {
               return {
                 ...item,
                 isCircleBelow: true,
@@ -319,9 +326,9 @@ export const ListPage: React.FC = () => {
       } else if (step === 2) {
         setList((prevState) => {
           const copiedArr = [...prevState];
-          copiedArr.splice(Number(inputIndex), 1);
+          copiedArr.splice(Number(values.inputIndex), 1);
           return copiedArr.map((item, i) => {
-            if (i < Number(inputIndex)) {
+            if (i < Number(values.inputIndex)) {
               return { ...item, status: ElementStates.Default };
             } else {
               return item;
@@ -335,16 +342,16 @@ export const ListPage: React.FC = () => {
 
   const btnArrUp = [
     {
-      text: Buttons.Append,
+      text: Buttons.Prepend,
       onClick: onAddHomeClick,
-      loader: loading === Buttons.Append,
-      disabled: inputValue === "" || loading !== "",
+      loader: loading === Buttons.Prepend,
+      disabled: values.inputValue === "" || loading !== "",
     },
     {
-      text: Buttons.Prepend,
+      text: Buttons.Append,
       onClick: onAddEndClick,
-      loader: loading === Buttons.Prepend,
-      disabled: inputValue === "" || loading !== "",
+      loader: loading === Buttons.Append,
+      disabled: values.inputValue === "" || loading !== "",
     },
     {
       text: Buttons.DeleteHead,
@@ -365,13 +372,14 @@ export const ListPage: React.FC = () => {
       text: Buttons.AddByIndex,
       onClick: onAddIndexClick,
       loader: loading === Buttons.AddByIndex,
-      disabled: inputIndex === "" || inputValue === "" || loading !== "",
+      disabled:
+        values.inputIndex === "" || values.inputValue === "" || loading !== "",
     },
     {
       text: Buttons.DeleteByIndex,
       onClick: onDeleteIndexClick,
       loader: loading === Buttons.DeleteByIndex,
-      disabled: inputIndex === "" || loading !== "",
+      disabled: values.inputIndex === "" || loading !== "",
     },
   ];
 
@@ -379,16 +387,22 @@ export const ListPage: React.FC = () => {
     <SolutionLayout title="Связный список">
       <div className={styles.menu}>
         <InputWithButton
-          input={inputValue}
-          onInputChange={onInputValueChange}
+          // input={inputValue}
+          // onInputChange={onInputValueChange}
           btnsArr={btnArrUp}
           isLimitText={true}
           maxLength={4}
+          value={values.inputValue}
+          onInput={handleChange}
+          name="inputValue"
         />
         <InputWithButton
-          input={inputIndex}
-          onInputChange={onInputIndexChange}
+          // input={inputIndex}
+          // onInputChange={onInputIndexChange}
           btnsArr={btnArrDown}
+          value={values.inputIndex}
+          onInput={handleChange}
+          name="inputIndex"
         />
       </div>
       <div className={styles.display}>
@@ -404,7 +418,7 @@ export const ListPage: React.FC = () => {
                       item.isCircleAbove ? (
                         <Circle
                           state={ElementStates.Changing}
-                          letter={inputValue}
+                          letter={values.inputValue}
                           isSmall
                         />
                       ) : i === 0 && !item.isCircleAbove ? (
