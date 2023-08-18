@@ -236,6 +236,7 @@ export const ListPage: React.FC = () => {
       text: Buttons.AddByIndex,
       onClick: onAddIndexClick,
       loader: loading === Buttons.AddByIndex,
+      linkedListDown: true,
       disabled:
         values.inputIndex === "" ||
         values.inputValue === "" ||
@@ -246,6 +247,7 @@ export const ListPage: React.FC = () => {
       text: Buttons.DeleteByIndex,
       onClick: onDeleteIndexClick,
       loader: loading === Buttons.DeleteByIndex,
+      linkedListDown: true,
       disabled:
         values.inputIndex === "" ||
         loading !== "" ||
@@ -269,6 +271,7 @@ export const ListPage: React.FC = () => {
           value={values.inputIndex}
           onInput={handleChange}
           name="inputIndex"
+          type="number"
         />
       </div>
       <div className={styles.display}>

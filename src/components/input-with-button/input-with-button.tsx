@@ -10,6 +10,7 @@ interface IinputWithButtonProps extends InputProps {
     onClick: (e: MouseEvent<HTMLButtonElement>) => void;
     loader?: boolean | undefined;
     disabled?: boolean | undefined;
+    linkedListDown?: boolean | undefined;
   }[];
 }
 
@@ -29,6 +30,7 @@ export const InputWithButton: React.FC<IinputWithButtonProps> = ({
               key={i}
               text={btn.text}
               onClick={btn.onClick}
+              linkedList={btn.linkedListDown ? "big" : "small"}
             />
           );
         })}

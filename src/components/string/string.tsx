@@ -67,7 +67,14 @@ export const StringComponent: React.FC = () => {
     setModifyedLetters(modifiedArray);
   };
 
-  const btnsArr = [{ text: Buttons.Reverse, onClick: sort, loader: loading }];
+  const btnsArr = [
+    {
+      text: Buttons.Reverse,
+      onClick: sort,
+      loader: loading,
+      disabled: input === "",
+    },
+  ];
 
   return (
     <SolutionLayout title="Строка">
