@@ -1,30 +1,20 @@
-import React, { useCallback, useRef } from "react";
+import React, { useRef } from "react";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { InputWithButton } from "../input-with-button/input-with-button";
 import { useState, useEffect } from "react";
 import styles from "./list-page.module.css";
 import { Circle } from "../ui/circle/circle";
-import { createRandomArr, waitToUpdate } from "../../utils/utils";
+import { waitToUpdate } from "../../utils/utils";
 import { ArrowIcon } from "../ui/icons/arrow-icon";
 import { ElementStates } from "../../types/element-states";
 import { MouseEvent } from "react";
 import { Buttons } from "../../types/buttons";
 import { useForm } from "../../hooks/useForm";
-import { SHORT_DELAY_IN_MS } from "../../constants/delays";
-import { HEAD, TAIL } from "../../constants/element-captions";
-import { TNode } from "./types";
 import { LinkedList } from "./linked-list";
 import { ElemWrapper } from "./elem-wrapper";
+import { HEAD, TAIL } from "../../constants/element-captions";
 
 export const ListPage: React.FC = () => {
-  const [list, setList] = useState<
-    {
-      value: string;
-      status: ElementStates;
-      isCircleAbove: boolean;
-      isCircleBelow: boolean;
-    }[]
-  >([]);
   const [loading, setLoading] = useState<string>("");
   const { values, handleChange, setValues } = useForm<{
     inputValue: string;
@@ -50,6 +40,7 @@ export const ListPage: React.FC = () => {
   }, []);
 
   const onAddHomeClick = async (e: MouseEvent<HTMLButtonElement>) => {
+    onLoadingChange(e);
     if (listRef.current.headNode) {
       listRef.current.headNode.value.isCircleAbove = true;
       setLinkedList(listRef.current.toArray());
@@ -58,28 +49,26 @@ export const ListPage: React.FC = () => {
         values.inputValue,
         ElementStates.Modified
       );
+      await waitToUpdate(34);
 
-      let promiseToAddElement = waitToUpdate(34);
-      promiseToAddElement.then(() => {
-        listRef.current.headNode!.value.isCircleAbove = false;
-        listRef.current.prepend(newElement);
-        setLinkedList(listRef.current.toArray());
-      });
-      await promiseToAddElement;
+      listRef.current.headNode!.value.isCircleAbove = false;
+      listRef.current.headNode!.value.head = false;
+      listRef.current.prepend(newElement);
+      listRef.current.headNode!.value.head = true;
+      setLinkedList(listRef.current.toArray());
+      await waitToUpdate(34);
 
-      let promiseToMoveHead = waitToUpdate(34);
-      promiseToMoveHead.then(() => {
-        newElement.status = ElementStates.Default;
-        setLinkedList(listRef.current.toArray());
-      });
+      newElement.status = ElementStates.Default;
+      setLinkedList(listRef.current.toArray());
       setValues((prevState) => {
         return { ...prevState, inputValue: "" };
       });
-      await promiseToMoveHead;
+      setLoading("");
     }
   };
 
   const onAddEndClick = async (e: MouseEvent<HTMLButtonElement>) => {
+    onLoadingChange(e);
     if (listRef.current.headNode) {
       listRef.current.tailNode!.value.isCircleAbove = true;
       setLinkedList(listRef.current.toArray());
@@ -88,64 +77,54 @@ export const ListPage: React.FC = () => {
         values.inputValue,
         ElementStates.Modified
       );
+      await waitToUpdate(34);
 
-      let promiseToAddElement = waitToUpdate(34);
-      promiseToAddElement.then(() => {
-        listRef.current.tailNode!.value.isCircleAbove = false;
-        listRef.current.append(newElement);
-        setLinkedList(listRef.current.toArray());
-      });
-      await promiseToAddElement;
+      listRef.current.tailNode!.value.isCircleAbove = false;
+      listRef.current.tailNode!.value.tail = false;
+      listRef.current.append(newElement);
+      listRef.current.tailNode!.value.tail = true;
+      setLinkedList(listRef.current.toArray());
+      await waitToUpdate(34);
 
-      let promiseToMoveHead = waitToUpdate(34);
-      promiseToMoveHead.then(() => {
-        newElement.status = ElementStates.Default;
-        setLinkedList(listRef.current.toArray());
-        setValues((prevState) => {
-          return { ...prevState, inputValue: "" };
-        });
+      newElement.status = ElementStates.Default;
+      setLinkedList(listRef.current.toArray());
+      setValues((prevState) => {
+        return { ...prevState, inputValue: "" };
       });
-      await promiseToMoveHead;
+      setLoading("");
     }
   };
 
   const onDeleteHomeClick = async (e: MouseEvent<HTMLButtonElement>) => {
+    onLoadingChange(e);
     if (listRef.current.headNode) {
       listRef.current.headNode!.value.isCircleBelow = true;
       setLinkedList(listRef.current.toArray());
+      await waitToUpdate(34);
 
-      let promiseToDeleteHead = waitToUpdate(34);
-      promiseToDeleteHead.then(() => {
-        listRef.current.tailNode!.value.isCircleAbove = false;
-        listRef.current.deleteHead();
-        setLinkedList(listRef.current.toArray());
-        setValues((prevState) => {
-          return { ...prevState, inputValue: "" };
-        });
-      });
-      await promiseToDeleteHead;
+      listRef.current.deleteHead();
+      listRef.current.headNode.value.head = true;
+      setLinkedList(listRef.current.toArray());
     }
+    setLoading("");
   };
 
   const onDeleteEndClick = async (e: MouseEvent<HTMLButtonElement>) => {
+    onLoadingChange(e);
     if (listRef.current.headNode) {
       listRef.current.tailNode!.value.isCircleBelow = true;
       setLinkedList(listRef.current.toArray());
+      await waitToUpdate(34);
 
-      let promiseToDeleteTail = waitToUpdate(34);
-      promiseToDeleteTail.then(() => {
-        listRef.current.tailNode!.value.isCircleAbove = false;
-        listRef.current.deleteTail();
-        setLinkedList(listRef.current.toArray());
-        setValues((prevState) => {
-          return { ...prevState, inputValue: "" };
-        });
-      });
-      await promiseToDeleteTail;
+      listRef.current.deleteTail();
+      listRef.current.tailNode!.value.tail = true;
+      setLinkedList(listRef.current.toArray());
     }
+    setLoading("");
   };
 
   const onAddIndexClick = async (e: MouseEvent<HTMLButtonElement>) => {
+    onLoadingChange(e);
     let currentNode = listRef.current.headNode;
     let currentIndex = 0;
     const index = Number(values.inputIndex);
@@ -167,6 +146,10 @@ export const ListPage: React.FC = () => {
       ElementStates.Modified
     );
     listRef.current.addByIndex(newElement, index);
+    if (index === 0 && listRef.current.headNode) {
+      listRef.current.headNode.value.head = true;
+      listRef.current.headNode.next!.value.head = false;
+    }
 
     currentNode = listRef.current.headNode;
 
@@ -181,9 +164,14 @@ export const ListPage: React.FC = () => {
     await waitToUpdate(23);
     newElement.status = ElementStates.Default;
     setLinkedList(listRef.current.toArray());
+    setValues((prevState) => {
+      return { ...prevState, inputValue: "" };
+    });
+    setLoading("");
   };
 
   const onDeleteIndexClick = async (e: MouseEvent<HTMLButtonElement>) => {
+    onLoadingChange(e);
     const index = Number(values.inputIndex);
 
     let currentNode = listRef.current.headNode;
@@ -201,6 +189,7 @@ export const ListPage: React.FC = () => {
     await waitToUpdate(33);
 
     listRef.current.deleteByIndex(index);
+    listRef.current.tailNode!.value.tail = true;
     currentNode = listRef.current.headNode;
     currentIndex = 0;
     while (currentNode && currentIndex < index) {
@@ -209,47 +198,57 @@ export const ListPage: React.FC = () => {
       currentIndex++;
     }
     setLinkedList(listRef.current.toArray());
+    setValues((prevState) => {
+      return { ...prevState, inputValue: "" };
+    });
+    setLoading("");
   };
 
   const btnArrUp = [
     {
       text: Buttons.Prepend,
       onClick: onAddHomeClick,
-      // loader: loading === Buttons.Prepend,
-      // disabled: values.inputValue === "" || loading !== "",
+      loader: loading === Buttons.Prepend,
+      disabled: values.inputValue === "" || loading !== "",
     },
     {
       text: Buttons.Append,
       onClick: onAddEndClick,
-      // loader: loading === Buttons.Append,
-      // disabled: values.inputValue === "" || loading !== "",
+      loader: loading === Buttons.Append,
+      disabled: values.inputValue === "" || loading !== "",
     },
     {
       text: Buttons.DeleteHead,
       onClick: onDeleteHomeClick,
-      // loader: loading === Buttons.DeleteHead,
-      // disabled: loading !== "" || loading !== "",
+      loader: loading === Buttons.DeleteHead,
+      disabled: loading !== "" || loading !== "",
     },
     {
       text: Buttons.DeleteTail,
       onClick: onDeleteEndClick,
-      // loader: loading === Buttons.DeleteTail,
-      // disabled: loading !== "" || loading !== "",
+      loader: loading === Buttons.DeleteTail,
+      disabled: loading !== "" || loading !== "",
     },
   ];
   const btnArrDown = [
     {
       text: Buttons.AddByIndex,
       onClick: onAddIndexClick,
-      // loader: loading === Buttons.AddByIndex,
-      // disabled:
-      //   values.inputIndex === "" || values.inputValue === "" || loading !== "",
+      loader: loading === Buttons.AddByIndex,
+      disabled:
+        values.inputIndex === "" ||
+        values.inputValue === "" ||
+        loading !== "" ||
+        Number(values.inputIndex) > listRef.current.getSize(),
     },
     {
       text: Buttons.DeleteByIndex,
       onClick: onDeleteIndexClick,
-      // loader: loading === Buttons.DeleteByIndex,
-      // disabled: values.inputIndex === "" || loading !== "",
+      loader: loading === Buttons.DeleteByIndex,
+      disabled:
+        values.inputIndex === "" ||
+        loading !== "" ||
+        Number(values.inputIndex) > listRef.current.getSize(),
     },
   ];
 
@@ -287,6 +286,8 @@ export const ListPage: React.FC = () => {
                           letter={values.inputValue}
                           isSmall
                         />
+                      ) : item.head ? (
+                        HEAD
                       ) : null
                     }
                     tail={
@@ -296,6 +297,8 @@ export const ListPage: React.FC = () => {
                           letter={item.value}
                           isSmall
                         />
+                      ) : item.tail ? (
+                        TAIL
                       ) : null
                     }
                     state={item.status}

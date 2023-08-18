@@ -9,7 +9,11 @@ export class LinkedListNode<T> {
 
 interface ILinkedList<T> {
   append: (element: T) => void;
+  prepend: (element: T) => void;
+  deleteHead: () => void;
+  deleteTail: () => void;
   addByIndex: (element: T, position: number) => void;
+  deleteByIndex: (position: number) => void;
   getSize: () => number;
   toArray: () => T[];
 }
@@ -52,10 +56,6 @@ export class LinkedList<T> implements ILinkedList<T> {
   }
 
   deleteByIndex(position: number) {
-    // If linked list is empty
-    // if (this.head === null)
-    //     return;
-
     let temp = this.head;
     if (position === 0) {
       this.deleteHead();
@@ -69,7 +69,6 @@ export class LinkedList<T> implements ILinkedList<T> {
 
   addByIndex(element: T, currIndex: number) {
     if (currIndex < 0 || currIndex > this.size) {
-      console.log("Enter a valid index");
       return;
     } else {
       const node = new LinkedListNode(element);
@@ -139,9 +138,7 @@ export class LinkedList<T> implements ILinkedList<T> {
       while (current.next?.next) {
         current = current.next;
       }
-      console.log("current", current);
       current.next = null;
-      console.log("current", current);
     }
   }
 
