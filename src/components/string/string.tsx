@@ -24,41 +24,37 @@ export const StringComponent: React.FC = () => {
       start <= end;
       start++, end--
     ) {
-      let promiseToChange = waitToUpdate(DELAY_IN_MS);
-      promiseToChange.then(() => {
-        setModifyedLetters((prevState) => {
-          return prevState.map((item, index) => {
-            if (index === start) {
-              return { ...item, status: ElementStates.Changing };
-            } else if (index === end) {
-              return { ...item, status: ElementStates.Changing };
-            } else {
-              return item;
-            }
-          });
-        });
-      });
-      await promiseToChange;
-      let promiseToSwap = waitToUpdate(DELAY_IN_MS);
-      promiseToSwap.then(() => {
-        setModifyedLetters((prevState) => {
-          let newState = [...prevState];
-          if (newState[start] && newState[end]) {
-            const temp = newState[start];
-            newState[start] = newState[end];
-            newState[end] = temp;
+      await waitToUpdate(DELAY_IN_MS);
+
+      setModifyedLetters((prevState) => {
+        return prevState.map((item, index) => {
+          if (index === start) {
+            return { ...item, status: ElementStates.Changing };
+          } else if (index === end) {
+            return { ...item, status: ElementStates.Changing };
+          } else {
+            return item;
           }
-          newState = newState.map((item, index) => {
-            if (item.status === ElementStates.Changing) {
-              return { ...item, status: ElementStates.Modified };
-            } else {
-              return item;
-            }
-          });
-          return newState;
         });
       });
-      await promiseToSwap;
+      await waitToUpdate(DELAY_IN_MS);
+
+      setModifyedLetters((prevState) => {
+        let newState = [...prevState];
+        if (newState[start] && newState[end]) {
+          const temp = newState[start];
+          newState[start] = newState[end];
+          newState[end] = temp;
+        }
+        newState = newState.map((item, index) => {
+          if (item.status === ElementStates.Changing) {
+            return { ...item, status: ElementStates.Modified };
+          } else {
+            return item;
+          }
+        });
+        return newState;
+      });
     }
     setLoading(false);
   };

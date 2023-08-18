@@ -13,6 +13,7 @@ import { useForm } from "../../hooks/useForm";
 import { LinkedList } from "./linked-list";
 import { ElemWrapper } from "./elem-wrapper";
 import { HEAD, TAIL } from "../../constants/element-captions";
+import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 
 export const ListPage: React.FC = () => {
   const [loading, setLoading] = useState<string>("");
@@ -49,14 +50,14 @@ export const ListPage: React.FC = () => {
         values.inputValue,
         ElementStates.Modified
       );
-      await waitToUpdate(34);
+      await waitToUpdate(SHORT_DELAY_IN_MS);
 
       listRef.current.headNode!.value.isCircleAbove = false;
       listRef.current.headNode!.value.head = false;
       listRef.current.prepend(newElement);
       listRef.current.headNode!.value.head = true;
       setLinkedList(listRef.current.toArray());
-      await waitToUpdate(34);
+      await waitToUpdate(SHORT_DELAY_IN_MS);
 
       newElement.status = ElementStates.Default;
       setLinkedList(listRef.current.toArray());
@@ -77,14 +78,14 @@ export const ListPage: React.FC = () => {
         values.inputValue,
         ElementStates.Modified
       );
-      await waitToUpdate(34);
+      await waitToUpdate(SHORT_DELAY_IN_MS);
 
       listRef.current.tailNode!.value.isCircleAbove = false;
       listRef.current.tailNode!.value.tail = false;
       listRef.current.append(newElement);
       listRef.current.tailNode!.value.tail = true;
       setLinkedList(listRef.current.toArray());
-      await waitToUpdate(34);
+      await waitToUpdate(SHORT_DELAY_IN_MS);
 
       newElement.status = ElementStates.Default;
       setLinkedList(listRef.current.toArray());
@@ -100,7 +101,7 @@ export const ListPage: React.FC = () => {
     if (listRef.current.headNode) {
       listRef.current.headNode!.value.isCircleBelow = true;
       setLinkedList(listRef.current.toArray());
-      await waitToUpdate(34);
+      await waitToUpdate(SHORT_DELAY_IN_MS);
 
       listRef.current.deleteHead();
       listRef.current.headNode.value.head = true;
@@ -114,7 +115,7 @@ export const ListPage: React.FC = () => {
     if (listRef.current.headNode) {
       listRef.current.tailNode!.value.isCircleBelow = true;
       setLinkedList(listRef.current.toArray());
-      await waitToUpdate(34);
+      await waitToUpdate(SHORT_DELAY_IN_MS);
 
       listRef.current.deleteTail();
       listRef.current.tailNode!.value.tail = true;
@@ -132,7 +133,7 @@ export const ListPage: React.FC = () => {
     while (currentNode && currentIndex <= index) {
       currentNode.value.isCircleAbove = true;
       setLinkedList(listRef.current.toArray());
-      await waitToUpdate(34);
+      await waitToUpdate(SHORT_DELAY_IN_MS);
 
       currentNode.value.status = ElementStates.Changing;
       currentNode.value.isCircleAbove = false;
@@ -161,7 +162,7 @@ export const ListPage: React.FC = () => {
     }
     setLinkedList(listRef.current.toArray());
 
-    await waitToUpdate(23);
+    await waitToUpdate(SHORT_DELAY_IN_MS);
     newElement.status = ElementStates.Default;
     setLinkedList(listRef.current.toArray());
     setValues((prevState) => {
@@ -181,12 +182,12 @@ export const ListPage: React.FC = () => {
       currentNode = currentNode?.next;
       currentIndex++;
       setLinkedList(listRef.current.toArray());
-      await waitToUpdate(33);
+      await waitToUpdate(SHORT_DELAY_IN_MS);
     }
 
     currentNode!.value.isCircleBelow = true;
     setLinkedList(listRef.current.toArray());
-    await waitToUpdate(33);
+    await waitToUpdate(SHORT_DELAY_IN_MS);
 
     listRef.current.deleteByIndex(index);
     listRef.current.tailNode!.value.tail = true;

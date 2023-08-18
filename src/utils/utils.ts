@@ -18,8 +18,8 @@ export const createRandomArr = (
   return randomNumsArray;
 };
 
-export const waitToUpdate = (i: number): Promise<number> => {
+export const waitToUpdate = (delay: number): Promise<void> => {
   return new Promise((resolve, reject) => {
-    setTimeout(() => resolve(i), DELAY_IN_MS);
+    setTimeout(() => resolve(), delay);
   });
 };

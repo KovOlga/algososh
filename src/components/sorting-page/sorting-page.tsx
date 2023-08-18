@@ -10,6 +10,7 @@ import { createRandomArr, waitToUpdate } from "../../utils/utils";
 import { MouseEvent } from "react";
 import { Direction } from "../../types/direction";
 import { swap } from "./utils";
+import { DELAY_IN_MS } from "../../constants/delays";
 
 export const SortingPage: React.FC = () => {
   const [selectedRadioBtn, setSelectedRadioBtn] =
@@ -47,68 +48,61 @@ export const SortingPage: React.FC = () => {
 
   const sortSelection = async (ascDescType: string) => {
     for (let i = 0; i <= arr.length; i++) {
-      let promiseToChangeCurrent = waitToUpdate(i);
-      promiseToChangeCurrent.then((outerInd) => {
+      await waitToUpdate(DELAY_IN_MS);
+      setArr((prevState) => {
+        return prevState.map((item, index) => {
+          if (index < i) {
+            return { ...item, status: ElementStates.Modified };
+          } else if (index === Number(i)) {
+            return { ...item, status: ElementStates.Changing };
+          } else {
+            return item;
+          }
+        });
+      });
+
+      for (let j = i + 1; j < arr.length; j++) {
+        await waitToUpdate(DELAY_IN_MS);
         setArr((prevState) => {
           return prevState.map((item, index) => {
-            if (index < i) {
-              return { ...item, status: ElementStates.Modified };
-            } else if (index === Number(outerInd)) {
+            if (index === j) {
               return { ...item, status: ElementStates.Changing };
+            } else if (index > i && index < j) {
+              return { ...item, status: ElementStates.Default };
             } else {
               return item;
             }
           });
         });
-      });
-      await promiseToChangeCurrent;
-      for (let j = i + 1; j < arr.length; j++) {
-        let promiseToReturnComparing = waitToUpdate(j);
-        promiseToReturnComparing.then(() => {
-          setArr((prevState) => {
-            return prevState.map((item, index) => {
-              if (index === j) {
-                return { ...item, status: ElementStates.Changing };
-              } else if (index > i && index < j) {
+        await waitToUpdate(DELAY_IN_MS);
+
+        setArr((prevstate) => {
+          if (
+            (ascDescType === Direction.Ascending &&
+              prevstate[i].value > prevstate[j].value) ||
+            (ascDescType === Direction.Descending &&
+              prevstate[i].value < prevstate[j].value)
+          ) {
+            swap(prevstate, i, j);
+            return prevstate.map((item, index) => {
+              if (index === i) {
+                return { ...item, status: ElementStates.Modified };
+              } else if (index === j) {
                 return { ...item, status: ElementStates.Default };
               } else {
                 return item;
               }
             });
-          });
+          } else {
+            return prevstate.map((item, index) => {
+              if (index === prevstate.length - 1) {
+                return { ...item, status: ElementStates.Default };
+              } else {
+                return item;
+              }
+            });
+          }
         });
-        await promiseToReturnComparing;
-        let promiseToSwap = waitToUpdate(j);
-        promiseToSwap.then(() => {
-          setArr((prevstate) => {
-            if (
-              (ascDescType === Direction.Ascending &&
-                prevstate[i].value > prevstate[j].value) ||
-              (ascDescType === Direction.Descending &&
-                prevstate[i].value < prevstate[j].value)
-            ) {
-              swap(prevstate, i, j);
-              return prevstate.map((item, index) => {
-                if (index === i) {
-                  return { ...item, status: ElementStates.Modified };
-                } else if (index === j) {
-                  return { ...item, status: ElementStates.Default };
-                } else {
-                  return item;
-                }
-              });
-            } else {
-              return prevstate.map((item, index) => {
-                if (index === prevstate.length - 1) {
-                  return { ...item, status: ElementStates.Default };
-                } else {
-                  return item;
-                }
-              });
-            }
-          });
-        });
-        await promiseToSwap;
       }
     }
     setLoading("");
@@ -117,45 +111,41 @@ export const SortingPage: React.FC = () => {
   const sortBubble = async (ascDescType: string) => {
     for (let i = 0; i < arr.length; i++) {
       for (let j = 0; j < arr.length - i - 1; j++) {
-        let promiseToSwapCurrent = waitToUpdate(j);
-        promiseToSwapCurrent.then(() => {
-          setArr((prevState) => {
-            if (
-              (ascDescType === Direction.Ascending &&
-                prevState[j].value > prevState[j + 1].value) ||
-              (ascDescType === Direction.Descending &&
-                prevState[j].value < prevState[j + 1].value)
-            ) {
-              swap(prevState, j, j + 1);
-            }
-            return prevState.map((item, index) => {
-              if (index === j || index === j + 1) {
-                return { ...item, status: ElementStates.Changing };
-              } else if (index < j) {
-                return { ...item, status: ElementStates.Default };
-              } else {
-                return item;
-              }
-            });
-          });
-        });
-        await promiseToSwapCurrent;
-      }
-      let promiseToMoveForward = waitToUpdate(i);
-      promiseToMoveForward.then(() => {
+        await waitToUpdate(DELAY_IN_MS);
+
         setArr((prevState) => {
+          if (
+            (ascDescType === Direction.Ascending &&
+              prevState[j].value > prevState[j + 1].value) ||
+            (ascDescType === Direction.Descending &&
+              prevState[j].value < prevState[j + 1].value)
+          ) {
+            swap(prevState, j, j + 1);
+          }
           return prevState.map((item, index) => {
-            if (index === arr.length - i - 1) {
-              return { ...item, status: ElementStates.Modified };
-            } else if (index < arr.length - i - 1) {
+            if (index === j || index === j + 1) {
+              return { ...item, status: ElementStates.Changing };
+            } else if (index < j) {
               return { ...item, status: ElementStates.Default };
             } else {
               return item;
             }
           });
         });
+      }
+      await waitToUpdate(DELAY_IN_MS);
+
+      setArr((prevState) => {
+        return prevState.map((item, index) => {
+          if (index === arr.length - i - 1) {
+            return { ...item, status: ElementStates.Modified };
+          } else if (index < arr.length - i - 1) {
+            return { ...item, status: ElementStates.Default };
+          } else {
+            return item;
+          }
+        });
       });
-      await promiseToMoveForward;
     }
     setLoading("");
   };
