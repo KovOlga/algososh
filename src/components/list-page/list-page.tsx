@@ -14,6 +14,7 @@ import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { HEAD, TAIL } from "../../constants/element-captions";
 import { TNode } from "./types";
 import { LinkedList } from "./linked-list";
+import { ElemWrapper } from "./elem-wrapper";
 
 export const ListPage: React.FC = () => {
   const [list, setList] = useState<
@@ -33,8 +34,12 @@ export const ListPage: React.FC = () => {
     inputIndex: "",
   });
 
-  const listRef = useRef(new LinkedList<string>(["12", "13", "14"]));
-  const [linkedList, setLinkedList] = useState<any[]>([]);
+  const listRef = useRef(
+    new LinkedList<ElemWrapper<string>>(
+      ElemWrapper.prototype.fromArray(["12", "13", "14", "15"])
+    )
+  );
+  const [linkedList, setLinkedList] = useState<ElemWrapper<string>[]>([]);
 
   const onLoadingChange = (e: MouseEvent<HTMLButtonElement>) => {
     setLoading(e.currentTarget.innerText);
@@ -44,48 +49,168 @@ export const ListPage: React.FC = () => {
     setLinkedList(listRef.current.toArray());
   }, []);
 
-  const onAddHomeClick = (e: MouseEvent<HTMLButtonElement>) => {
-    listRef.current.prepend(values.inputValue);
-    setTimeout(() => {
+  const onAddHomeClick = async (e: MouseEvent<HTMLButtonElement>) => {
+    if (listRef.current.headNode) {
+      listRef.current.headNode.value.isCircleAbove = true;
       setLinkedList(listRef.current.toArray());
+
+      const newElement = new ElemWrapper(
+        values.inputValue,
+        ElementStates.Modified
+      );
+
+      let promiseToAddElement = waitToUpdate(34);
+      promiseToAddElement.then(() => {
+        listRef.current.headNode!.value.isCircleAbove = false;
+        listRef.current.prepend(newElement);
+        setLinkedList(listRef.current.toArray());
+      });
+      await promiseToAddElement;
+
+      let promiseToMoveHead = waitToUpdate(34);
+      promiseToMoveHead.then(() => {
+        newElement.status = ElementStates.Default;
+        setLinkedList(listRef.current.toArray());
+      });
       setValues((prevState) => {
         return { ...prevState, inputValue: "" };
       });
-    }, SHORT_DELAY_IN_MS);
+      await promiseToMoveHead;
+    }
   };
 
-  const onAddEndClick = (e: MouseEvent<HTMLButtonElement>) => {
-    listRef.current.append(values.inputValue);
-    setTimeout(() => {
+  const onAddEndClick = async (e: MouseEvent<HTMLButtonElement>) => {
+    if (listRef.current.headNode) {
+      listRef.current.tailNode!.value.isCircleAbove = true;
       setLinkedList(listRef.current.toArray());
-    }, SHORT_DELAY_IN_MS);
+
+      const newElement = new ElemWrapper(
+        values.inputValue,
+        ElementStates.Modified
+      );
+
+      let promiseToAddElement = waitToUpdate(34);
+      promiseToAddElement.then(() => {
+        listRef.current.tailNode!.value.isCircleAbove = false;
+        listRef.current.append(newElement);
+        setLinkedList(listRef.current.toArray());
+      });
+      await promiseToAddElement;
+
+      let promiseToMoveHead = waitToUpdate(34);
+      promiseToMoveHead.then(() => {
+        newElement.status = ElementStates.Default;
+        setLinkedList(listRef.current.toArray());
+        setValues((prevState) => {
+          return { ...prevState, inputValue: "" };
+        });
+      });
+      await promiseToMoveHead;
+    }
   };
 
-  const onDeleteHomeClick = (e: MouseEvent<HTMLButtonElement>) => {
-    listRef.current.deleteHead();
-    setTimeout(() => {
+  const onDeleteHomeClick = async (e: MouseEvent<HTMLButtonElement>) => {
+    if (listRef.current.headNode) {
+      listRef.current.headNode!.value.isCircleBelow = true;
       setLinkedList(listRef.current.toArray());
-    }, SHORT_DELAY_IN_MS);
+
+      let promiseToDeleteHead = waitToUpdate(34);
+      promiseToDeleteHead.then(() => {
+        listRef.current.tailNode!.value.isCircleAbove = false;
+        listRef.current.deleteHead();
+        setLinkedList(listRef.current.toArray());
+        setValues((prevState) => {
+          return { ...prevState, inputValue: "" };
+        });
+      });
+      await promiseToDeleteHead;
+    }
   };
 
-  const onDeleteEndClick = (e: MouseEvent<HTMLButtonElement>) => {
-    listRef.current.deleteTail();
-    setTimeout(() => {
+  const onDeleteEndClick = async (e: MouseEvent<HTMLButtonElement>) => {
+    if (listRef.current.headNode) {
+      listRef.current.tailNode!.value.isCircleBelow = true;
       setLinkedList(listRef.current.toArray());
-    }, SHORT_DELAY_IN_MS);
+
+      let promiseToDeleteTail = waitToUpdate(34);
+      promiseToDeleteTail.then(() => {
+        listRef.current.tailNode!.value.isCircleAbove = false;
+        listRef.current.deleteTail();
+        setLinkedList(listRef.current.toArray());
+        setValues((prevState) => {
+          return { ...prevState, inputValue: "" };
+        });
+      });
+      await promiseToDeleteTail;
+    }
   };
 
-  const onAddIndexClick = (e: MouseEvent<HTMLButtonElement>) => {
-    listRef.current.addByIndex(values.inputValue, Number(values.inputIndex));
+  const onAddIndexClick = async (e: MouseEvent<HTMLButtonElement>) => {
+    let currentNode = listRef.current.headNode;
+    let currentIndex = 0;
+    const index = Number(values.inputIndex);
+
+    while (currentNode && currentIndex <= index) {
+      currentNode.value.isCircleAbove = true;
+      setLinkedList(listRef.current.toArray());
+      await waitToUpdate(34);
+
+      currentNode.value.status = ElementStates.Changing;
+      currentNode.value.isCircleAbove = false;
+
+      currentNode = currentNode?.next;
+      currentIndex++;
+    }
+
+    const newElement = new ElemWrapper(
+      values.inputValue,
+      ElementStates.Modified
+    );
+    listRef.current.addByIndex(newElement, index);
+
+    currentNode = listRef.current.headNode;
+
+    while (currentNode) {
+      if (currentNode.value !== newElement) {
+        currentNode.value.status = ElementStates.Default;
+      }
+      currentNode = currentNode?.next;
+    }
+    setLinkedList(listRef.current.toArray());
+
+    await waitToUpdate(23);
+    newElement.status = ElementStates.Default;
     setLinkedList(listRef.current.toArray());
   };
 
-  const onDeleteIndexClick = (e: MouseEvent<HTMLButtonElement>) => {
-    listRef.current.deleteByIndex(Number(values.inputIndex));
+  const onDeleteIndexClick = async (e: MouseEvent<HTMLButtonElement>) => {
+    const index = Number(values.inputIndex);
+
+    let currentNode = listRef.current.headNode;
+    let currentIndex = 0;
+    while (currentNode && currentIndex < index) {
+      currentNode.value.status = ElementStates.Changing;
+      currentNode = currentNode?.next;
+      currentIndex++;
+      setLinkedList(listRef.current.toArray());
+      await waitToUpdate(33);
+    }
+
+    currentNode!.value.isCircleBelow = true;
+    setLinkedList(listRef.current.toArray());
+    await waitToUpdate(33);
+
+    listRef.current.deleteByIndex(index);
+    currentNode = listRef.current.headNode;
+    currentIndex = 0;
+    while (currentNode && currentIndex < index) {
+      currentNode.value.status = ElementStates.Default;
+      currentNode = currentNode?.next;
+      currentIndex++;
+    }
     setLinkedList(listRef.current.toArray());
   };
 
-  /////////////////////
   const btnArrUp = [
     {
       text: Buttons.Prepend,
@@ -153,31 +278,27 @@ export const ListPage: React.FC = () => {
               return (
                 <li className={styles.list__item} key={i}>
                   <Circle
-                    letter={item.value}
+                    letter={item.isCircleBelow ? "" : item.value}
                     index={i}
-                    // head={
-                    //   item.isCircleAbove ? (
-                    //     <Circle
-                    //       state={ElementStates.Changing}
-                    //       letter={values.inputValue}
-                    //       isSmall
-                    //     />
-                    //   ) : i === 0 && !item.isCircleAbove ? (
-                    //     HEAD
-                    //   ) : null
-                    // }
-                    // tail={
-                    //   item.isCircleBelow ? (
-                    //     <Circle
-                    //       state={ElementStates.Changing}
-                    //       letter={item.value}
-                    //       isSmall
-                    //     />
-                    //   ) : i === list.length - 1 && !item.isCircleBelow ? (
-                    //     TAIL
-                    //   ) : null
-                    // }
-                    // state={item.status}
+                    head={
+                      item.isCircleAbove ? (
+                        <Circle
+                          state={ElementStates.Changing}
+                          letter={values.inputValue}
+                          isSmall
+                        />
+                      ) : null
+                    }
+                    tail={
+                      item.isCircleBelow ? (
+                        <Circle
+                          state={ElementStates.Changing}
+                          letter={item.value}
+                          isSmall
+                        />
+                      ) : null
+                    }
+                    state={item.status}
                   />
                   {i !== linkedList.length - 1 ? <ArrowIcon /> : null}
                 </li>
