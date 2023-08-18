@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useRef } from "react";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { InputWithButton } from "../input-with-button/input-with-button";
 import { useState, useEffect } from "react";
@@ -12,6 +12,8 @@ import { Buttons } from "../../types/buttons";
 import { useForm } from "../../hooks/useForm";
 import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { HEAD, TAIL } from "../../constants/element-captions";
+import { TNode } from "./types";
+import { LinkedList } from "./linked-list";
 
 export const ListPage: React.FC = () => {
   const [list, setList] = useState<
@@ -31,357 +33,98 @@ export const ListPage: React.FC = () => {
     inputIndex: "",
   });
 
+  const listRef = useRef(new LinkedList<string>(["12", "13", "14"]));
+  const [linkedList, setLinkedList] = useState<any[]>([]);
+
   const onLoadingChange = (e: MouseEvent<HTMLButtonElement>) => {
     setLoading(e.currentTarget.innerText);
   };
 
   useEffect(() => {
-    const randomNumsArray = createRandomArr(4, 5, 0, 100).map((item) => {
-      return {
-        value: item.toString(),
-        status: ElementStates.Default,
-        isCircleAbove: false,
-        isCircleBelow: false,
-      };
-    });
-    setList(randomNumsArray);
+    setLinkedList(listRef.current.toArray());
   }, []);
 
   const onAddHomeClick = (e: MouseEvent<HTMLButtonElement>) => {
-    onLoadingChange(e);
-    let step = 0;
-
-    setTimeout(function run() {
-      if (step === 0) {
-        setList((prevState) => {
-          return prevState.map((item, i) => {
-            if (i === 0) {
-              return { ...item, isCircleAbove: true };
-            } else {
-              return item;
-            }
-          });
-        });
-        step++;
-        setTimeout(run, SHORT_DELAY_IN_MS);
-      } else if (step === 1) {
-        setList((prevState) => {
-          return [
-            {
-              value: values.inputValue,
-              status: ElementStates.Modified,
-              isCircleAbove: false,
-              isCircleBelow: false,
-            },
-            ...prevState,
-          ].map((item, i) => {
-            if (item.isCircleAbove) {
-              return { ...item, isCircleAbove: false };
-            } else {
-              return item;
-            }
-          });
-        });
-        step++;
-        setTimeout(run, SHORT_DELAY_IN_MS);
-      } else if (step === 2) {
-        setList((prevState) => {
-          return prevState.map((item, i) => {
-            if (i === 0) {
-              return { ...item, status: ElementStates.Default };
-            } else {
-              return item;
-            }
-          });
-        });
-        setLoading("");
-        setValues((prevState) => {
-          return { ...prevState, inputValue: "" };
-        });
-      }
+    listRef.current.prepend(values.inputValue);
+    setTimeout(() => {
+      setLinkedList(listRef.current.toArray());
+      setValues((prevState) => {
+        return { ...prevState, inputValue: "" };
+      });
     }, SHORT_DELAY_IN_MS);
   };
 
   const onAddEndClick = (e: MouseEvent<HTMLButtonElement>) => {
-    onLoadingChange(e);
-    let step = 0;
-
-    setTimeout(function run() {
-      if (step === 0) {
-        setList((prevState) => {
-          return prevState.map((item, i) => {
-            if (i === prevState.length - 1) {
-              return { ...item, isCircleAbove: true };
-            } else {
-              return item;
-            }
-          });
-        });
-        step++;
-        setTimeout(run, SHORT_DELAY_IN_MS);
-      } else if (step === 1) {
-        setList((prevState) => {
-          return [
-            ...prevState,
-            {
-              value: values.inputValue,
-              status: ElementStates.Modified,
-              isCircleAbove: false,
-              isCircleBelow: false,
-            },
-          ].map((item, i) => {
-            if (item.isCircleAbove) {
-              return { ...item, isCircleAbove: false };
-            } else {
-              return item;
-            }
-          });
-        });
-        step++;
-        setTimeout(run, SHORT_DELAY_IN_MS);
-      } else if (step === 2) {
-        setList((prevState) => {
-          return prevState.map((item, i) => {
-            if (i === prevState.length - 1) {
-              return { ...item, status: ElementStates.Default };
-            } else {
-              return item;
-            }
-          });
-        });
-        setLoading("");
-        setValues((prevState) => {
-          return { ...prevState, inputValue: "" };
-        });
-      }
+    listRef.current.append(values.inputValue);
+    setTimeout(() => {
+      setLinkedList(listRef.current.toArray());
     }, SHORT_DELAY_IN_MS);
   };
 
   const onDeleteHomeClick = (e: MouseEvent<HTMLButtonElement>) => {
-    onLoadingChange(e);
-    let step = 0;
-
-    setTimeout(function run() {
-      if (step === 0) {
-        setList((prevState) => {
-          return prevState.map((item, i) => {
-            if (i === 0) {
-              return { ...item, isCircleBelow: true };
-            } else {
-              return item;
-            }
-          });
-        });
-        step++;
-        setTimeout(run, SHORT_DELAY_IN_MS);
-      } else if (step === 1) {
-        setList((prevState) => {
-          return prevState.filter((item, i) => i !== 0);
-        });
-        setLoading("");
-        setValues((prevState) => {
-          return { ...prevState, inputValue: "" };
-        });
-      }
+    listRef.current.deleteHead();
+    setTimeout(() => {
+      setLinkedList(listRef.current.toArray());
     }, SHORT_DELAY_IN_MS);
   };
 
   const onDeleteEndClick = (e: MouseEvent<HTMLButtonElement>) => {
-    onLoadingChange(e);
-    let step = 0;
-
-    setTimeout(function run() {
-      if (step === 0) {
-        setList((prevState) => {
-          return prevState.map((item, i) => {
-            if (i === list.length - 1) {
-              return { ...item, isCircleBelow: true };
-            } else {
-              return item;
-            }
-          });
-        });
-        step++;
-        setTimeout(run, SHORT_DELAY_IN_MS);
-      } else if (step === 1) {
-        setList((prevState) => {
-          return prevState.filter((item, i) => i !== list.length - 1);
-        });
-        setLoading("");
-        setValues((prevState) => {
-          return { ...prevState, inputValue: "" };
-        });
-      }
+    listRef.current.deleteTail();
+    setTimeout(() => {
+      setLinkedList(listRef.current.toArray());
     }, SHORT_DELAY_IN_MS);
   };
 
   const onAddIndexClick = (e: MouseEvent<HTMLButtonElement>) => {
-    onLoadingChange(e);
-    let step = 0;
-
-    setTimeout(async function run() {
-      if (step === 0) {
-        for (let i = 0; i <= Number(values.inputIndex); i++) {
-          const promiseToMoveCircleAbove = waitToUpdate(i);
-          promiseToMoveCircleAbove.then((currentInd) => {
-            setList((prevState) => {
-              return prevState.map((item, i) => {
-                if (i === currentInd) {
-                  return {
-                    ...item,
-                    isCircleAbove: true,
-                  };
-                } else if (i < Number(currentInd)) {
-                  return {
-                    ...item,
-                    isCircleAbove: false,
-                    status: ElementStates.Changing,
-                  };
-                } else {
-                  return item;
-                }
-              });
-            });
-          });
-          await promiseToMoveCircleAbove;
-        }
-        step++;
-        setTimeout(run, SHORT_DELAY_IN_MS);
-      } else if (step === 1) {
-        setList((prevState) => {
-          const copiedArr = [...prevState];
-          copiedArr.splice(Number(values.inputIndex), 0, {
-            value: values.inputValue,
-            status: ElementStates.Modified,
-            isCircleAbove: false,
-            isCircleBelow: false,
-          });
-          return copiedArr.map((item, i) => {
-            if (i < Number(values.inputIndex)) {
-              return { ...item, status: ElementStates.Default };
-            } else if (i === Number(values.inputIndex) + 1) {
-              return { ...item, isCircleAbove: false };
-            } else {
-              return item;
-            }
-          });
-        });
-        step++;
-        setTimeout(run, SHORT_DELAY_IN_MS);
-      } else if (step === 2) {
-        setList((prevState) => {
-          return prevState.map((item, i) => {
-            if (i === Number(values.inputIndex)) {
-              return { ...item, status: ElementStates.Default };
-            } else {
-              return item;
-            }
-          });
-        });
-        setLoading("");
-      }
-    }, SHORT_DELAY_IN_MS);
+    listRef.current.addByIndex(values.inputValue, Number(values.inputIndex));
+    setLinkedList(listRef.current.toArray());
   };
 
   const onDeleteIndexClick = (e: MouseEvent<HTMLButtonElement>) => {
-    onLoadingChange(e);
-    let step = 0;
-
-    setTimeout(async function run() {
-      if (step === 0) {
-        for (let i = 0; i <= Number(values.inputIndex); i++) {
-          let promiseToMoveCircleBelow = waitToUpdate(i);
-          promiseToMoveCircleBelow.then((currentInd) => {
-            setList((prevState) => {
-              return prevState.map((item, i) => {
-                if (i < Number(currentInd)) {
-                  return {
-                    ...item,
-                    isCircleBelow: false,
-                    status: ElementStates.Changing,
-                  };
-                } else {
-                  return item;
-                }
-              });
-            });
-          });
-          await promiseToMoveCircleBelow;
-        }
-        step++;
-        setTimeout(run, SHORT_DELAY_IN_MS);
-      } else if (step === 1) {
-        setList((prevState) => {
-          return prevState.map((item, i) => {
-            if (i === Number(values.inputIndex)) {
-              return {
-                ...item,
-                isCircleBelow: true,
-              };
-            } else {
-              return item;
-            }
-          });
-        });
-        step++;
-        setTimeout(run, SHORT_DELAY_IN_MS);
-      } else if (step === 2) {
-        setList((prevState) => {
-          const copiedArr = [...prevState];
-          copiedArr.splice(Number(values.inputIndex), 1);
-          return copiedArr.map((item, i) => {
-            if (i < Number(values.inputIndex)) {
-              return { ...item, status: ElementStates.Default };
-            } else {
-              return item;
-            }
-          });
-        });
-        setLoading("");
-      }
-    }, SHORT_DELAY_IN_MS);
+    listRef.current.deleteByIndex(Number(values.inputIndex));
+    setLinkedList(listRef.current.toArray());
   };
 
+  /////////////////////
   const btnArrUp = [
     {
       text: Buttons.Prepend,
       onClick: onAddHomeClick,
-      loader: loading === Buttons.Prepend,
-      disabled: values.inputValue === "" || loading !== "",
+      // loader: loading === Buttons.Prepend,
+      // disabled: values.inputValue === "" || loading !== "",
     },
     {
       text: Buttons.Append,
       onClick: onAddEndClick,
-      loader: loading === Buttons.Append,
-      disabled: values.inputValue === "" || loading !== "",
+      // loader: loading === Buttons.Append,
+      // disabled: values.inputValue === "" || loading !== "",
     },
     {
       text: Buttons.DeleteHead,
       onClick: onDeleteHomeClick,
-      loader: loading === Buttons.DeleteHead,
-      disabled: loading !== "" || loading !== "",
+      // loader: loading === Buttons.DeleteHead,
+      // disabled: loading !== "" || loading !== "",
     },
     {
       text: Buttons.DeleteTail,
       onClick: onDeleteEndClick,
-      loader: loading === Buttons.DeleteTail,
-      disabled: loading !== "" || loading !== "",
+      // loader: loading === Buttons.DeleteTail,
+      // disabled: loading !== "" || loading !== "",
     },
   ];
-
   const btnArrDown = [
     {
       text: Buttons.AddByIndex,
       onClick: onAddIndexClick,
-      loader: loading === Buttons.AddByIndex,
-      disabled:
-        values.inputIndex === "" || values.inputValue === "" || loading !== "",
+      // loader: loading === Buttons.AddByIndex,
+      // disabled:
+      //   values.inputIndex === "" || values.inputValue === "" || loading !== "",
     },
     {
       text: Buttons.DeleteByIndex,
       onClick: onDeleteIndexClick,
-      loader: loading === Buttons.DeleteByIndex,
-      disabled: values.inputIndex === "" || loading !== "",
+      // loader: loading === Buttons.DeleteByIndex,
+      // disabled: values.inputIndex === "" || loading !== "",
     },
   ];
 
@@ -405,38 +148,38 @@ export const ListPage: React.FC = () => {
       </div>
       <div className={styles.display}>
         <ul className={styles.list}>
-          {list &&
-            list.map((item, i) => {
+          {linkedList &&
+            linkedList.map((item, i) => {
               return (
                 <li className={styles.list__item} key={i}>
                   <Circle
-                    letter={item.isCircleBelow ? "" : item.value}
+                    letter={item.value}
                     index={i}
-                    head={
-                      item.isCircleAbove ? (
-                        <Circle
-                          state={ElementStates.Changing}
-                          letter={values.inputValue}
-                          isSmall
-                        />
-                      ) : i === 0 && !item.isCircleAbove ? (
-                        HEAD
-                      ) : null
-                    }
-                    tail={
-                      item.isCircleBelow ? (
-                        <Circle
-                          state={ElementStates.Changing}
-                          letter={item.value}
-                          isSmall
-                        />
-                      ) : i === list.length - 1 && !item.isCircleBelow ? (
-                        TAIL
-                      ) : null
-                    }
-                    state={item.status}
+                    // head={
+                    //   item.isCircleAbove ? (
+                    //     <Circle
+                    //       state={ElementStates.Changing}
+                    //       letter={values.inputValue}
+                    //       isSmall
+                    //     />
+                    //   ) : i === 0 && !item.isCircleAbove ? (
+                    //     HEAD
+                    //   ) : null
+                    // }
+                    // tail={
+                    //   item.isCircleBelow ? (
+                    //     <Circle
+                    //       state={ElementStates.Changing}
+                    //       letter={item.value}
+                    //       isSmall
+                    //     />
+                    //   ) : i === list.length - 1 && !item.isCircleBelow ? (
+                    //     TAIL
+                    //   ) : null
+                    // }
+                    // state={item.status}
                   />
-                  {i !== list.length - 1 ? <ArrowIcon /> : null}
+                  {i !== linkedList.length - 1 ? <ArrowIcon /> : null}
                 </li>
               );
             })}

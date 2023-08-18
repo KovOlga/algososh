@@ -21,7 +21,7 @@ export const QueuePage: React.FC = () => {
   const [isHeadChanging, setHeadChanging] = useState<Boolean>(false);
   const [isTailChanging, setTailChanging] = useState<Boolean>(false);
 
-  const queueRef = useRef(new Queue<string>(3));
+  const queueRef = useRef(new Queue<string>(7));
   const [queue, setQueue] = useState<(string | null)[]>([]);
 
   useEffect(() => {
