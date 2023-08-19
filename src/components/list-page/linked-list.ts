@@ -65,6 +65,7 @@ export class LinkedList<T> implements ILinkedList<T> {
       let next = temp.next.next;
       temp.next = next;
     }
+    this.size--;
   }
 
   addByIndex(element: T, currIndex: number) {
@@ -129,6 +130,7 @@ export class LinkedList<T> implements ILinkedList<T> {
     } else {
       this.head = null;
     }
+    this.size--;
   }
 
   deleteTail() {
@@ -138,6 +140,7 @@ export class LinkedList<T> implements ILinkedList<T> {
         current = current.next;
       }
       current.next = null;
+      this.size--;
     }
   }
 

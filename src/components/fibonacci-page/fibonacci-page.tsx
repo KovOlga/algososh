@@ -38,7 +38,11 @@ export const FibonacciPage: React.FC = () => {
       onClick: onDisplayClick,
       loader: loading,
       disabled:
-        values.input === "" || Number(values) >= 20 || Number(values) < 1,
+        values.input === "" ||
+        Number(values) >= 20 ||
+        Number(values) < 1 ||
+        Number(values.input) > 19 ||
+        Number(values.input) < 0,
     },
   ];
 

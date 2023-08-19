@@ -241,7 +241,8 @@ export const ListPage: React.FC = () => {
         values.inputIndex === "" ||
         values.inputValue === "" ||
         loading !== "" ||
-        Number(values.inputIndex) > listRef.current.getSize(),
+        Number(values.inputIndex) > listRef.current.getSize() - 1 ||
+        Number(values.inputIndex) < 0,
     },
     {
       text: Buttons.DeleteByIndex,
@@ -251,7 +252,8 @@ export const ListPage: React.FC = () => {
       disabled:
         values.inputIndex === "" ||
         loading !== "" ||
-        Number(values.inputIndex) > listRef.current.getSize(),
+        Number(values.inputIndex) > listRef.current.getSize() - 1 ||
+        Number(values.inputIndex) < 0,
     },
   ];
 
