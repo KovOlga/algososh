@@ -81,7 +81,6 @@ export class LinkedList<T> implements ILinkedList<T> {
         let prevNode = null;
         let index = 0;
         while (index++ < currIndex) {
-          console.log("index", index);
           prevNode = currentNode;
           currentNode = currentNode!.next;
         }
