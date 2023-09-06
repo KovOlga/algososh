@@ -68,7 +68,7 @@ export const StackPage: React.FC = () => {
 
   return (
     <SolutionLayout title="Стек">
-      <div className={styles.menu}>
+      <div data-testid="stack-page" className={styles.menu}>
         <InputWithButton
           value={values.input}
           onInput={handleChange}

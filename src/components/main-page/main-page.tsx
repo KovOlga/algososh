@@ -21,23 +21,31 @@ export const MainPage: React.FC<MainPageProps> = ({ extraClass = "" }) => {
           им. Фибоначчи
         </p>
       </div>
-      <div className={styles.cards_box}>
-        <Link className={styles.link} to="/recursion">
+      <div data-testid="main-page" className={styles.cards_box}>
+        <Link
+          data-testid="recursion-link"
+          className={styles.link}
+          to="/recursion"
+        >
           <div className={`${styles.card} ${styles.string}`} />
         </Link>
-        <Link className={styles.link} to="/fibonacci">
+        <Link
+          data-testid="fibonacci-link"
+          className={styles.link}
+          to="/fibonacci"
+        >
           <div className={`${styles.card} ${styles.fibonacci}`} />
         </Link>
-        <Link className={styles.link} to="/sorting">
+        <Link data-testid="sorting-link" className={styles.link} to="/sorting">
           <div className={`${styles.card} ${styles.arr}`} />
         </Link>
-        <Link className={styles.link} to="/stack">
+        <Link data-testid="stack-link" className={styles.link} to="/stack">
           <div className={`${styles.card} ${styles.stack}`} />
         </Link>
-        <Link className={styles.link} to="/queue">
+        <Link data-testid="queue-link" className={styles.link} to="/queue">
           <div className={`${styles.card} ${styles.queue}`} />
         </Link>
-        <Link className={styles.link} to="/list">
+        <Link data-testid="list-link" className={styles.link} to="/list">
           <div className={`${styles.card} ${styles.list}`} />
         </Link>
       </div>

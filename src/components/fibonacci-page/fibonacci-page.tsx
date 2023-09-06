@@ -48,7 +48,7 @@ export const FibonacciPage: React.FC = () => {
 
   return (
     <SolutionLayout title="Последовательность Фибоначчи">
-      <div className={styles.container}>
+      <div data-testid="fibonacci-page" className={styles.container}>
         <InputWithButton
           onInput={handleChange}
           isLimitText
