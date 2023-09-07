@@ -92,7 +92,7 @@ export const StackPage: React.FC = () => {
                   <Circle
                     head={i === stackRef.current.lastElement ? "top" : null}
                     letter={`${number}`}
-                    tail={`${i}`}
+                    index={i}
                     state={
                       isLastElementChanging &&
                       i === stackRef.current.lastElement
