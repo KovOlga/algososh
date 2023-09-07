@@ -64,7 +64,7 @@ export const FibonacciPage: React.FC = () => {
               fibSequence.map((number, i) => {
                 return (
                   <li key={i} className={styles.list__item}>
-                    <Circle letter={number.toString()} tail={`${i}`} />
+                    <Circle letter={number.toString()} index={i} />
                   </li>
                 );
               })}
