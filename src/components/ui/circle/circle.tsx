@@ -12,9 +12,7 @@ interface CircleProps {
   extraClass?: string;
   isSmall?: boolean;
 }
-// default 0, 50, 255
-//changing 210, 82, 225
-//modif 127, 224, 81
+
 export const Circle: React.FC<CircleProps> = ({
   state = ElementStates.Default,
   letter,
