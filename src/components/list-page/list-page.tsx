@@ -259,7 +259,7 @@ export const ListPage: React.FC = () => {
 
   return (
     <SolutionLayout title="Связный список">
-      <div className={styles.menu}>
+      <div data-testid="list-page" className={styles.menu}>
         <InputWithButton
           btnsArr={btnArrUp}
           isLimitText={true}

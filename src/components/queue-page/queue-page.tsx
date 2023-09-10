@@ -78,7 +78,7 @@ export const QueuePage: React.FC = () => {
 
   return (
     <SolutionLayout title="Очередь">
-      <div className={styles.menu}>
+      <div data-testid="queue-page" className={styles.menu}>
         <InputWithButton
           value={values.input}
           name="input"

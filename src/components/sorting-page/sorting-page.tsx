@@ -152,7 +152,7 @@ export const SortingPage: React.FC = () => {
 
   return (
     <SolutionLayout title="Сортировка массива">
-      <div className={styles.menu}>
+      <div data-testid="sorting-page" className={styles.menu}>
         <fieldset className={styles.fieldset}>
           <RadioInput
             value="selectionSort"

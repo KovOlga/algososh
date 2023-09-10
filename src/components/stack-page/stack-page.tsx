@@ -68,7 +68,7 @@ export const StackPage: React.FC = () => {
 
   return (
     <SolutionLayout title="Стек">
-      <div className={styles.menu}>
+      <div data-testid="stack-page" className={styles.menu}>
         <InputWithButton
           value={values.input}
           onInput={handleChange}
@@ -92,7 +92,7 @@ export const StackPage: React.FC = () => {
                   <Circle
                     head={i === stackRef.current.lastElement ? "top" : null}
                     letter={`${number}`}
-                    tail={`${i}`}
+                    index={i}
                     state={
                       isLastElementChanging &&
                       i === stackRef.current.lastElement
