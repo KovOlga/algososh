@@ -1,4 +1,10 @@
 import { Buttons } from "../../src/types/buttons";
+import {
+  headTestId,
+  circleTestId,
+  tailTestId,
+  indexTestId,
+} from "../../src/constants/selectors";
 
 describe("Linked List tests", () => {
   beforeEach(function () {
@@ -42,34 +48,34 @@ describe("Linked List tests", () => {
       cy.get("li")
         .eq(0)
         .within(() => {
-          cy.get('[data-testid="head"]').should("have.text", "head");
-          cy.get('[data-testid="circle"]').should("have.text", "12");
-          cy.get('[data-testid="index"]').should("have.text", "0");
-          cy.get('[data-testid="tail"]').should("have.text", "");
+          cy.get(headTestId).should("have.text", "head");
+          cy.get(circleTestId).should("have.text", "12");
+          cy.get(indexTestId).should("have.text", "0");
+          cy.get(tailTestId).should("have.text", "");
         });
       cy.get("li")
         .eq(1)
         .within(() => {
-          cy.get('[data-testid="head"]').should("have.text", "");
-          cy.get('[data-testid="circle"]').should("have.text", "13");
-          cy.get('[data-testid="index"]').should("have.text", "1");
-          cy.get('[data-testid="tail"]').should("have.text", "");
+          cy.get(headTestId).should("have.text", "");
+          cy.get(circleTestId).should("have.text", "13");
+          cy.get(indexTestId).should("have.text", "1");
+          cy.get(tailTestId).should("have.text", "");
         });
       cy.get("li")
         .eq(2)
         .within(() => {
-          cy.get('[data-testid="head"]').should("have.text", "");
-          cy.get('[data-testid="circle"]').should("have.text", "14");
-          cy.get('[data-testid="index"]').should("have.text", "2");
-          cy.get('[data-testid="tail"]').should("have.text", "");
+          cy.get(headTestId).should("have.text", "");
+          cy.get(circleTestId).should("have.text", "14");
+          cy.get(indexTestId).should("have.text", "2");
+          cy.get(tailTestId).should("have.text", "");
         });
       cy.get("li")
         .eq(3)
         .within(() => {
-          cy.get('[data-testid="head"]').should("have.text", "");
-          cy.get('[data-testid="circle"]').should("have.text", "15");
-          cy.get('[data-testid="index"]').should("have.text", "3");
-          cy.get('[data-testid="tail"]').should("have.text", "tail");
+          cy.get(headTestId).should("have.text", "");
+          cy.get(circleTestId).should("have.text", "15");
+          cy.get(indexTestId).should("have.text", "3");
+          cy.get(tailTestId).should("have.text", "tail");
         });
     });
   });
@@ -84,9 +90,9 @@ describe("Linked List tests", () => {
     cy.get("li")
       .first()
       .within(() => {
-        cy.get('[data-testid="head"]')
+        cy.get(headTestId)
           .first()
-          .find('[data-testid="circle"]')
+          .find(circleTestId)
           .should("have.text", "ab")
           .and("have.css", "border", "4px solid rgb(210, 82, 225)");
       });
@@ -97,8 +103,8 @@ describe("Linked List tests", () => {
       .should("have.length", "5")
       .first()
       .within(() => {
-        cy.get('[data-testid="head"]').should("have.text", "head");
-        cy.get('[data-testid="circle"]').should(
+        cy.get(headTestId).should("have.text", "head");
+        cy.get(circleTestId).should(
           "have.css",
           "border",
           "4px solid rgb(127, 224, 81)"
@@ -109,7 +115,7 @@ describe("Linked List tests", () => {
 
     cy.get("li")
       .first()
-      .find('[data-testid="circle"]')
+      .find(circleTestId)
       .should("have.css", "border", "4px solid rgb(0, 50, 255)");
   });
 
@@ -123,9 +129,9 @@ describe("Linked List tests", () => {
     cy.get("li")
       .last()
       .within(() => {
-        cy.get('[data-testid="head"]')
+        cy.get(headTestId)
           .first()
-          .find('[data-testid="circle"]')
+          .find(circleTestId)
           .should("have.text", "bc")
           .and("have.css", "border", "4px solid rgb(210, 82, 225)");
       });
@@ -136,8 +142,8 @@ describe("Linked List tests", () => {
       .should("have.length", "5")
       .last()
       .within(() => {
-        cy.get('[data-testid="tail"]').should("have.text", "tail");
-        cy.get('[data-testid="circle"]').should(
+        cy.get(tailTestId).should("have.text", "tail");
+        cy.get(circleTestId).should(
           "have.css",
           "border",
           "4px solid rgb(127, 224, 81)"
@@ -148,7 +154,7 @@ describe("Linked List tests", () => {
 
     cy.get("li")
       .last()
-      .find('[data-testid="circle"]')
+      .find(circleTestId)
       .should("have.css", "border", "4px solid rgb(0, 50, 255)");
   });
 
@@ -162,11 +168,11 @@ describe("Linked List tests", () => {
       .should("have.length", 4)
       .first()
       .within(() => {
-        cy.get('[data-testid="head"]').should("have.text", "head");
-        cy.get('[data-testid="circle"]').first().should("have.text", "");
-        cy.get('[data-testid="tail"]')
+        cy.get(headTestId).should("have.text", "head");
+        cy.get(circleTestId).first().should("have.text", "");
+        cy.get(tailTestId)
           .first()
-          .find('[data-testid="circle"]')
+          .find(circleTestId)
           .should("have.text", "12")
           .and("have.css", "border", "4px solid rgb(210, 82, 225)");
       });
@@ -177,8 +183,8 @@ describe("Linked List tests", () => {
       .should("have.length", "3")
       .first()
       .within(() => {
-        cy.get('[data-testid="head"]').should("have.text", "head");
-        cy.get('[data-testid="circle"]')
+        cy.get(headTestId).should("have.text", "head");
+        cy.get(circleTestId)
           .should("have.css", "border", "4px solid rgb(0, 50, 255)")
           .and("have.text", "13");
       });
@@ -194,10 +200,10 @@ describe("Linked List tests", () => {
       .should("have.length", 4)
       .last()
       .within(() => {
-        cy.get('[data-testid="circle"]').first().should("have.text", "");
-        cy.get('[data-testid="tail"]')
+        cy.get(circleTestId).first().should("have.text", "");
+        cy.get(tailTestId)
           .first()
-          .find('[data-testid="circle"]')
+          .find(circleTestId)
           .should("have.text", "15")
           .and("have.css", "border", "4px solid rgb(210, 82, 225)");
       });
@@ -208,8 +214,8 @@ describe("Linked List tests", () => {
       .should("have.length", "3")
       .last()
       .within(() => {
-        cy.get('[data-testid="tail"]').should("have.text", "tail");
-        cy.get('[data-testid="circle"]')
+        cy.get(tailTestId).should("have.text", "tail");
+        cy.get(circleTestId)
           .should("have.css", "border", "4px solid rgb(0, 50, 255)")
           .and("have.text", "14");
       });
@@ -225,8 +231,8 @@ describe("Linked List tests", () => {
 
     cy.get("li")
       .first()
-      .find('[data-testid="head"]')
-      .find('[data-testid="circle"]')
+      .find(headTestId)
+      .find(circleTestId)
       .should("have.text", "55")
       .and("have.css", "border", "4px solid rgb(210, 82, 225)");
 
@@ -237,8 +243,8 @@ describe("Linked List tests", () => {
       .each(($li, index) => {
         if (index === 0) {
           cy.wrap($li).within(() => {
-            cy.get('[data-testid="head"]').should("have.text", "head");
-            cy.get('[data-testid="circle"]').should(
+            cy.get(headTestId).should("have.text", "head");
+            cy.get(circleTestId).should(
               "have.css",
               "border",
               "4px solid rgb(210, 82, 225)"
@@ -247,8 +253,8 @@ describe("Linked List tests", () => {
         }
         if (index === 1) {
           cy.wrap($li)
-            .find('[data-testid="head"]')
-            .find('[data-testid="circle"]')
+            .find(headTestId)
+            .find(circleTestId)
             .should("have.text", "55")
             .and("have.css", "border", "4px solid rgb(210, 82, 225)");
         }
@@ -261,8 +267,8 @@ describe("Linked List tests", () => {
       .each(($li, index) => {
         if (index === 1) {
           cy.wrap($li).within(() => {
-            cy.get('[data-testid="head"]').should("have.text", "");
-            cy.get('[data-testid="circle"]').should(
+            cy.get(headTestId).should("have.text", "");
+            cy.get(circleTestId).should(
               "have.css",
               "border",
               "4px solid rgb(210, 82, 225)"
@@ -271,8 +277,8 @@ describe("Linked List tests", () => {
         }
         if (index === 2) {
           cy.wrap($li)
-            .find('[data-testid="head"]')
-            .find('[data-testid="circle"]')
+            .find(headTestId)
+            .find(circleTestId)
             .should("have.text", "55")
             .and("have.css", "border", "4px solid rgb(210, 82, 225)");
         }
@@ -285,16 +291,16 @@ describe("Linked List tests", () => {
       .each(($li, index) => {
         if (index === 2) {
           cy.wrap($li).within(() => {
-            cy.get('[data-testid="head"]').should("have.text", "");
-            cy.get('[data-testid="circle"]')
+            cy.get(headTestId).should("have.text", "");
+            cy.get(circleTestId)
               .should("have.text", "55")
               .and("have.css", "border", "4px solid rgb(127, 224, 81)");
           });
         }
         if (index === 3) {
           cy.wrap($li).within(() => {
-            cy.get('[data-testid="head"]').should("have.text", "");
-            cy.get('[data-testid="circle"]')
+            cy.get(headTestId).should("have.text", "");
+            cy.get(circleTestId)
               .should("have.text", "14")
               .and("have.css", "border", "4px solid rgb(0, 50, 255)");
           });
@@ -308,7 +314,7 @@ describe("Linked List tests", () => {
       .each(($li, index) => {
         if (index === 2) {
           cy.wrap($li).within(() => {
-            cy.get('[data-testid="circle"]')
+            cy.get(circleTestId)
               .should("have.text", "55")
               .and("have.css", "border", "4px solid rgb(0, 50, 255)");
           });
@@ -327,8 +333,8 @@ describe("Linked List tests", () => {
       .should("have.length", 4)
       .first()
       .within(() => {
-        cy.get('[data-testid="head"]').should("have.text", "head");
-        cy.get('[data-testid="circle"]').should(
+        cy.get(headTestId).should("have.text", "head");
+        cy.get(circleTestId).should(
           "have.css",
           "border",
           "4px solid rgb(210, 82, 225)"
@@ -342,7 +348,7 @@ describe("Linked List tests", () => {
       .each(($li, index) => {
         if (index === 1) {
           cy.wrap($li).within(() => {
-            cy.get('[data-testid="circle"]').should(
+            cy.get(circleTestId).should(
               "have.css",
               "border",
               "4px solid rgb(210, 82, 225)"
@@ -358,13 +364,13 @@ describe("Linked List tests", () => {
       .each(($li, index) => {
         if (index === 2) {
           cy.wrap($li).within(() => {
-            cy.get('[data-testid="circle"]')
+            cy.get(circleTestId)
               .first()
               .should("have.text", "")
               .and("have.css", "border", "4px solid rgb(0, 50, 255)");
 
-            cy.get('[data-testid="tail"]')
-              .find('[data-testid="circle"]')
+            cy.get(tailTestId)
+              .find(circleTestId)
               .should("have.text", "14")
               .and("have.css", "border", "4px solid rgb(210, 82, 225)");
           });
@@ -378,7 +384,7 @@ describe("Linked List tests", () => {
       .each(($li, index) => {
         if (index === 2) {
           cy.wrap($li)
-            .find('[data-testid="circle"]')
+            .find(circleTestId)
             .should("have.text", "15")
             .and("have.css", "border", "4px solid rgb(0, 50, 255)");
         }
