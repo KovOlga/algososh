@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { Route } from "react-router-dom";
 import { FibonacciPage } from "../fibonacci-page/fibonacci-page";
 import { ListPage } from "../list-page/list-page";
 import { MainPage } from "../main-page/main-page";
@@ -13,31 +13,27 @@ import styles from "./app.module.css";
 function App() {
   return (
     <div className={styles.app}>
-      <BrowserRouter>
-        <Switch>
-          <Route path="/" exact>
-            <MainPage />
-          </Route>
-          <Route path="/recursion">
-            <StringComponent />
-          </Route>
-          <Route path="/fibonacci">
-            <FibonacciPage />
-          </Route>
-          <Route path="/sorting">
-            <SortingPage />
-          </Route>
-          <Route path="/stack">
-            <StackPage />
-          </Route>
-          <Route path="/queue">
-            <QueuePage />
-          </Route>
-          <Route path="/list">
-            <ListPage />
-          </Route>
-        </Switch>
-      </BrowserRouter>
+      <Route path="/" exact>
+        <MainPage />
+      </Route>
+      <Route path="/recursion">
+        <StringComponent />
+      </Route>
+      <Route path="/fibonacci">
+        <FibonacciPage />
+      </Route>
+      <Route path="/sorting">
+        <SortingPage />
+      </Route>
+      <Route path="/stack">
+        <StackPage />
+      </Route>
+      <Route path="/queue">
+        <QueuePage />
+      </Route>
+      <Route path="/list">
+        <ListPage />
+      </Route>
     </div>
   );
 }
