@@ -1,6 +1,10 @@
 # Проектная работа. МБОУ АЛГОСОШ им. Фибоначчи
 
-Данная проектная работа написана на React с использованием TypeScript
+<!-- Сайт доступен по [адресу](https://kovolga.github.io/algososh/)
+
+Стек: React, TypeScript, Jest, Cypress
+
+<img src="./src/images/preview.jpg" width=420px> -->
 
 В работе представлена поэтапная работа следующих **алгоритимов и структур данных**:
 
@@ -18,4 +22,5 @@
 - Jest
 - Cypress
 
-[**Дизайн проекта**](https://www.figma.com/file/RIkypcTQN5d37g7RRTFid0/Algososh_external_link?node-id=0%3A1)
+Проект был выполнен в соответствии с предоставленным Яндекс Практикумом
+[макетом](https://www.figma.com/file/RIkypcTQN5d37g7RRTFid0/Algososh_external_link?node-id=0%3A1).
